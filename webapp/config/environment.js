@@ -15,7 +15,11 @@ module.exports = function(environment) {
 
     APP: {
       initialJobLimit: 10,
-      refreshInterval: 1
+      refreshInterval: 1,
+      data : {
+        host: 'http://localhost:9192',
+        path: ''
+      }
     }
   };
 
@@ -25,6 +29,15 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+    ENV.APP.refreshInterval = 60;
+    ENV.APP.initialJobLimit = 1;
+    ENV.APP.data = {
+      host: 'http://localhost:4200',
+      path: 'api'
+    };
+  }
+
+  if (environment === 'staging') {
     ENV.APP.refreshInterval = 60;
     ENV.APP.initialJobLimit = 1;
   }
