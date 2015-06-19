@@ -6,7 +6,7 @@ Single worker that processes cli jobs with a graphical user interface for feedba
 Roadmap
 -------
 
-* 0.1.0 Design of api and graphical interface (webapp in Ember)
+* 0.1.0 ~~Design of api and graphical interface (webapp in Ember)~~
 * 0.2.0 Pull jobs from Redis and process jobs concurrently
 * 0.3.0 Log to logstash
 * 0.4.0 Retry failed jobs
