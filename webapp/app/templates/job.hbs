@@ -1,0 +1,42 @@
+<h1>Job {{model.id}}</h1>
+<dl class="job">
+    <dt>Command</dt>
+    <dd>{{model.command}}</dd>
+    <dt>Attempts</dt>
+    <dd>{{model.attempts}}</dd>
+    <dt>Nicer</dt>
+    <dd>{{model.nicer}}</dd>
+    <dt>Status</dt>
+    <dd>{{model.status}}</dd>
+</dl>
+
+<h2>Results</h2>
+<table class="result">
+    <thead>
+        <tr>
+            <th>Exit code</th>
+            <th>Started at</th>
+            <th>Finished at</th>
+            <th>Duration in sec</th>
+            <th>Log output</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each result in model.results}}
+            <tr>
+                <td>{{result.exitCode}}</td>
+                <td>{{datetime-format result.startedAt}}</td>
+                <td>{{datetime-format result.finishedAt}}</td>
+                <td>{{result.duration}}s</td>
+                <td>
+                    {{#if result.stdout}}
+                        {{log-output name='stdout' output=result.stdout}}
+                    {{/if}}
+                    {{#if result.stderr}}
+                        {{log-output name='stderr' output=result.stderr}}
+                    {{/if}}
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>

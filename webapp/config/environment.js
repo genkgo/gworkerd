@@ -14,8 +14,8 @@ module.exports = function(environment) {
     },
 
     APP: {
-      // Here you can pass flags/options to your application instance
-      // when it is created
+      initialJobLimit: 10,
+      refreshInterval: 1
     }
   };
 
@@ -25,6 +25,8 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+    ENV.APP.refreshInterval = 60;
+    ENV.APP.initialJobLimit = 1;
   }
 
   if (environment === 'test') {

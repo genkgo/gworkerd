@@ -1,0 +1,18 @@
+<table class="jobs">
+    <thead>
+        <tr>
+            <th class="identifier">ID</th>
+            <th class="command">Command</th>
+            <th class="attempts">Attempts</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each job in reverse}}
+            <tr class="{{job.status}}">
+                <td>{{#link-to 'job' job}}{{job.id}}{{/link-to}}</td>
+                <td>{{job.command}}</td>
+                <td>{{job.attempts}}</td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>

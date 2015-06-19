@@ -1,3 +1,9 @@
-<h2 id="title">Welcome to Ember.js</h2>
+<header>
+    <h1>Gworkerd {{model.hostname}} ({{model.ip}})</h1>
+</header>
 
-{{outlet}}
+<main>
+    {{outlet}}
+</main>
+
+<footer>Started At: {{datetime-format model.started}} - Gworkerd {{model.version}}</footer>
