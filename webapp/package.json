@@ -35,8 +35,11 @@
     "ember-disable-proxy-controllers": "^1.0.0",
     "ember-export-application-global": "^1.0.2",
     "ember-fetch": "1.1.1",
+    "ember-websockets": "1.0.6",
     "express": "^4.12.4",
     "glob": "^4.5.3",
-    "morgan": "^1.6.0"
+    "morgan": "^1.6.0",
+    "node-uuid": "^1.4.3",
+    "ws": "^0.7.2"
   }
 }

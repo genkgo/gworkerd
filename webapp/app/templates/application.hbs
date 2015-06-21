@@ -1,6 +1,19 @@
 <header>
-    <h1>Gworkerd {{model.hostname}} ({{model.ip}})</h1>
+    <h1>Gworkerd</h1>
+    <h2>
+        {{#if connected}}
+            connected to {{model.hostname}} ({{model.ip}})
+        {{else}}
+            disconnected
+        {{/if}}
+    </h2>
 </header>
+<nav>
+    {{#link-to 'index'}}Dashboard{{/link-to}}
+    {{#link-to 'jobs' (query-params status="successful")}}Processed{{/link-to}}
+    {{#link-to 'jobs' (query-params status="failed")}}Failed{{/link-to}}
+    {{#link-to 'jobs' (query-params status="busy")}}Busy{{/link-to}}
+</nav>
 
 <main>
     {{outlet}}

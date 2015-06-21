@@ -4,7 +4,7 @@ var jobs = [
     command: '/usr/bin/php test.php',
     nicer: 10,
     attempts: 1,
-    successful: true,
+    status: 'successful',
     lastTriedAt : new Date(2015, 3, 9, 8, 0, 0),
     results: [
       {
@@ -22,7 +22,7 @@ var jobs = [
     command: '/usr/bin/php test.php',
     nicer: 10,
     attempts: 1,
-    successful: true,
+    status: 'failed',
     lastTriedAt : new Date(2015, 3, 9, 9, 0, 0),
     results: [
       {
@@ -40,7 +40,7 @@ var jobs = [
     command: '/usr/bin/php test.php',
     nicer: 10,
     attempts: 1,
-    successful: true,
+    status: 'successful',
     lastTriedAt : new Date(2015, 3, 9, 10, 0, 0),
     results: [
       {
@@ -52,28 +52,10 @@ var jobs = [
         'stderr': '[PHP] error'
       }
     ]
-  },
-  {
-    id: '543a2bb1-a9d7-46cf-bcfe-6372ee80595f',
-    command: '/usr/bin/php test.php',
-    nicer: 10,
-    attempts: 1,
-    successful: true,
-    lastTriedAt : new Date(2015, 3, 9, 11, 0, 0),
-    results: [
-      {
-        'id': '44602575-fb75-440f-b307-65176f0017c0',
-        'exitCode': 200,
-        'startedAt': new Date(2015, 3, 9, 11, 0, 0),
-        'finishedAt': new Date(2015, 3, 9, 11, 10, 0),
-        'stdout': '[PHP] success',
-        'stderr': '[PHP] error'
-      }
-    ]
   }
 ];
 
-module.exports = function(app) {
+module.exports = function(app, wss) {
   var express = require('express');
   var jobsRouter = express.Router();
   var counter = 0;
@@ -128,4 +110,61 @@ module.exports = function(app) {
   });
 
   app.use('/api/jobs', jobsRouter);
+
+  var uuid = require('node-uuid');
+  var events = require('events');
+  var eventEmitter = new events.EventEmitter();
+
+  var startNewJob = function () {
+    var job = {
+      id: uuid.v1(),
+      command: '/usr/bin/php test.php',
+      nicer: 10,
+      attempts: 1,
+      status: 'busy',
+      lastTriedAt : new Date(),
+      results: []
+    };
+
+    jobs.push(job);
+    return job;
+  };
+
+  setInterval(function () {
+    var runningJob = startNewJob();
+    eventEmitter.emit('jobStarted', runningJob);
+    setTimeout(function () {
+      var exitCode = Math.random() < 0.5 ? 0 : 1;
+      runningJob.results.push({
+        'id': uuid.v1(),
+        'exitCode': exitCode,
+        'startedAt': runningJob.lastTriedAt,
+        'finishedAt': new Date(),
+        'stdout': 'STDOUT output',
+        'stderr': 'STDERR output'
+      });
+      if (exitCode === 0) {
+        runningJob.status = 'successful';
+      } else {
+        runningJob.status = 'failed';
+      }
+      runningJob.attempts = runningJob.results.length;
+      eventEmitter.emit('jobFinished', runningJob);
+    }, 3000);
+  }, 2000);
+
+  wss.on('connection', function (wss) {
+    var sendUpdate = function (job) {
+      try {
+        wss.send(
+          JSON.stringify({
+            job: job
+          })
+        );
+      } catch (e) {
+      }
+    };
+    eventEmitter.on('jobFinished', sendUpdate);
+    eventEmitter.on('jobStarted', sendUpdate);
+  });
 };

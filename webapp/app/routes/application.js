@@ -6,5 +6,11 @@ export default Ember.Route.extend({
     return fetch('/api/server').then(function(request) {
       return request.json();
     });
+  },
+
+  actions : {
+    jobUpdate : function (job) {
+      this.store.push('job', this.store.normalize('job', job));
+    }
   }
 });

@@ -14,13 +14,21 @@ module.exports = function(environment) {
     },
 
     APP: {
-      initialJobLimit: 10,
-      refreshInterval: 1,
+      initialJobLimit: 300,
       data : {
         host: 'http://localhost:9192',
-        path: ''
+        path: '',
+        socket: 'ws://localhost:9192/'
       }
     }
+  };
+
+  ENV.contentSecurityPolicy = {
+    'script-src': "'self' 'unsafe-eval'",
+    'img-src': "'self'",
+    'font-src': "'self'",
+    'style-src': "'self'",
+    'connect-src': "'self' ws://localhost:4200 localhost:4200"
   };
 
   if (environment === 'development') {
@@ -29,16 +37,14 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
-    ENV.APP.refreshInterval = 60;
-    ENV.APP.initialJobLimit = 1;
     ENV.APP.data = {
       host: 'http://localhost:4200',
-      path: 'api'
+      path: 'api',
+      socket: 'ws://localhost:4200/api/stream'
     };
   }
 
   if (environment === 'staging') {
-    ENV.APP.refreshInterval = 60;
     ENV.APP.initialJobLimit = 1;
   }
 
@@ -50,7 +56,6 @@ module.exports = function(environment) {
     // keep test console output quieter
     ENV.APP.LOG_ACTIVE_GENERATION = false;
     ENV.APP.LOG_VIEW_LOOKUPS = false;
-
     ENV.APP.rootElement = '#ember-testing';
   }
 

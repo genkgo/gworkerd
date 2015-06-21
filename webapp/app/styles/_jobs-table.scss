@@ -1,3 +1,20 @@
 table.jobs {
   width:100%;
+  text-align: left;
+
+  td.identifier:before {
+    content: ' \25CF';
+    font-size: 1em;
+    margin-right: 1em;
+  }
+
+  tr.successful td.identifier:before {
+    color: #008000;
+  }
+  tr.failed td.identifier:before {
+    color: red;
+  }
+  tr.busy td.identifier:before {
+    color: black;
+  }
 }

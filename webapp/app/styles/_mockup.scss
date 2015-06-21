@@ -1,15 +1,29 @@
 header {
   position: fixed;
   top:0;
-  height: 4em;
+}
+
+nav {
+  position:fixed;
+  top: 2em;
+  left:12em;
+
+  a {
+    margin: 0 2em;
+  }
 }
 
 main {
-  margin-top: 4em;
+  margin-top: 9em;
 }
 
 footer {
   position: fixed;
-  bottom:0;
-  height: 4em;
+  bottom: 0px;
+  height: 2em;
+  background: #FFF none repeat scroll 0% 0%;
+  z-index: 10;
+  width: 100%;
+  padding: 1em;
+  text-align: center;
 }
