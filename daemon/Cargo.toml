@@ -4,4 +4,4 @@ version = "0.1.0"
 authors = [ "Frederik Bosch <development@genkgo.nl>" ]
 
 [dependencies]
-stomp = { git = "https://github.com/frederikbosch/stomp-rs"}
+stomp = { git = "https://github.com/frederikbosch/stomp-rs", branch="mio-v3" }

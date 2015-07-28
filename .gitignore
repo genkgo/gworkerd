@@ -12,3 +12,6 @@
 
 # IDE
 /.idea
+
+# Cargo overrides
+/.cargo

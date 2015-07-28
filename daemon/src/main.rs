@@ -1,6 +1,8 @@
 extern crate stomp;
 
 use stomp::frame::Frame;
+use stomp::header::{Header, SuppressedHeader};
+use stomp::connection::{Credentials};
 use stomp::subscription::AckOrNack::Ack;
 
 fn main() {
@@ -8,8 +10,11 @@ fn main() {
   let destination = "/topic/messages";
   let mut message_count: u64 = 0;
 
-
-  let mut session = match stomp::session("172.17.0.5", 61613).start() {
+  let mut session = match stomp::session("172.17.0.6", 61613)
+    .with(Credentials("guest", "guest"))
+    .with(SuppressedHeader("host"))
+    .with(Header::new("host", "/"))
+    .start() {
       Ok(session) => session,
       Err(error)  => panic!("Could not connect to the server: {}", error)
    };
