@@ -5,22 +5,57 @@ extern crate mysql;
 extern crate stomp;
 extern crate rustc_serialize;
 
-use flexi_logger::{detailed_format,init,LogConfig};
+use flexi_logger::{detailed_format,init};
+use flexi_logger::LogConfig as FlexiLogConfig;
 use mysql::conn::MyOpts;
 use mysql::conn::pool::MyPool;
 use rustc_serialize::json;
 use std::default::Default;
+use std::fs::File;
+use std::io::Read;
 use std::process::Command;
 use std::sync::mpsc::channel;
 use std::thread;
+use stomp::connection::{Credentials};
 use stomp::frame::Frame;
 use stomp::header::{Header, SuppressedHeader};
-use stomp::connection::{Credentials};
 use stomp::subscription::AckOrNack::Ack;
 use stomp::subscription::AckMode;
 
 const NUMBER_OF_THREADS : u32 = 10;
 const TOPIC : &'static str = "/queue/test_messages";
+
+#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
+struct StompConfig {
+	address: String,
+	port: u32,
+	host: String,
+	username: String,
+	password: String,
+	topic: String
+}
+
+#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
+struct MysqlConfig {
+	address: String,
+	username: String,
+	password: String,
+	database: String
+}
+
+#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
+struct LogConfig {
+	directory: String,
+	levels: String
+}
+
+#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
+struct Config {
+	log: LogConfig,
+	threads: u32,
+	stomp: StompConfig,
+	mysql: MysqlConfig,
+}
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 struct WorkerRequest {
@@ -43,11 +78,16 @@ struct WorkerItem {
 }
 
 fn main() {
-	init( LogConfig {
+	let mut file = File::open("/workspace/gworkerd/assets/config/example.json").unwrap();
+	let mut data = String::new();
+	file.read_to_string(&mut data).unwrap();
+	let config: Config = json::decode(&data).unwrap();
+
+	init( FlexiLogConfig {
 		log_to_file: true,
 		directory: Some("/var/log/gworkerd".to_string()),
 		format: detailed_format,
-		.. LogConfig::new()
+		.. FlexiLogConfig::new()
 		},
 		Some("gworkerd=info,mysql=warn,stomp=warn".to_string())
 	).unwrap_or_else(|e|{panic!("Logger initialization failed with {}",e)});

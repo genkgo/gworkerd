@@ -1,0 +1,21 @@
+{
+    "threads": 10,
+    "log": {
+        "directory": "/var/log/gworkerd",
+        "levels": "gworkerd=info,mysql=warn,stomp=warn"
+    },
+    "mysql": {
+        "address": "172.17.42.1",
+        "username": "root",
+        "password": "",
+        "database": "worker_results"
+    },
+    "stomp": {
+        "address": "172.17.42.1",
+        "port": 61613,
+        "username": "guest",
+        "password": "guest",
+        "host": "/",
+        "topic": "/queue/test_messages"
+    }
+}
