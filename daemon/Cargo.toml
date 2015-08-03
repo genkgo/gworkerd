@@ -4,4 +4,5 @@ version = "0.1.0"
 authors = [ "Frederik Bosch <development@genkgo.nl>" ]
 
 [dependencies]
-stomp = { git = "https://github.com/frederikbosch/stomp-rs", branch="mio-v3" }
+stomp = "~0.10.2"
+rustc-serialize = "0.3"
