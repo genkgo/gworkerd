@@ -11,11 +11,12 @@
         "database": "worker_results"
     },
     "stomp": {
-        "address": "172.17.42.1",
+        "address": "172.17.0.6",
         "port": 61613,
         "username": "guest",
         "password": "guest",
         "host": "/",
-        "topic": "/queue/test_messages"
+        "topic": "/queue/test_messages",
+        "prefetch_count": 1
     }
 }

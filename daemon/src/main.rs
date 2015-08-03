@@ -1,3 +1,4 @@
+extern crate docopt;
 extern crate flexi_logger;
 #[macro_use]
 extern crate log;
@@ -5,6 +6,7 @@ extern crate mysql;
 extern crate stomp;
 extern crate rustc_serialize;
 
+use docopt::Docopt;
 use flexi_logger::{detailed_format,init};
 use flexi_logger::LogConfig as FlexiLogConfig;
 use mysql::conn::MyOpts;
@@ -22,17 +24,32 @@ use stomp::header::{Header, SuppressedHeader};
 use stomp::subscription::AckOrNack::Ack;
 use stomp::subscription::AckMode;
 
-const NUMBER_OF_THREADS : u32 = 10;
-const TOPIC : &'static str = "/queue/test_messages";
+// Write the Docopt usage string.
+static USAGE: &'static str = "
+Usage: gworkerd [options] <config>
+       gworkerd (--help | --version)
+
+Options:
+    -h, --help     Print this information
+    -v, --version  Show the version.
+";
+
+#[derive(RustcDecodable, Debug)]
+struct Args {
+	arg_config: String,
+	flag_help: bool,
+	flag_version: bool,
+}
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 struct StompConfig {
 	address: String,
-	port: u32,
+	port: u16,
 	host: String,
 	username: String,
 	password: String,
-	topic: String
+	topic: String,
+  prefetch_count: u16
 }
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
@@ -78,31 +95,38 @@ struct WorkerItem {
 }
 
 fn main() {
-	let mut file = File::open("/workspace/gworkerd/assets/config/example.json").unwrap();
+	// docopt
+	let args: Args = Docopt::new(USAGE)
+		.and_then(|d| d.decode())
+		.unwrap_or_else(|e| e.exit());
+
+	let mut file = File::open(args.arg_config).unwrap();
 	let mut data = String::new();
 	file.read_to_string(&mut data).unwrap();
 	let config: Config = json::decode(&data).unwrap();
 
 	init( FlexiLogConfig {
 		log_to_file: true,
-		directory: Some("/var/log/gworkerd".to_string()),
+		directory: Some(config.log.directory.clone()),
 		format: detailed_format,
 		.. FlexiLogConfig::new()
 		},
-		Some("gworkerd=info,mysql=warn,stomp=warn".to_string())
+		Some(config.log.levels.clone())
 	).unwrap_or_else(|e|{panic!("Logger initialization failed with {}",e)});
 
 	let mut threads = vec![];
 	let (result_backend_tx, result_backend_rx) = channel::<WorkerItem>();
 
-	for thread_number in 0..NUMBER_OF_THREADS {
+	for thread_number in 0..config.threads {
 		let tx = result_backend_tx.clone();
+		let stomp_config = config.stomp.clone();
 		let processor = thread::spawn(move || {
 			// connect to message queue
-			let mut session = match stomp::session("172.17.0.6", 61613)
-				.with(Credentials("guest", "guest"))
+			let stomp_config = stomp_config.clone();
+			let mut session = match stomp::session(&stomp_config.address, stomp_config.port)
+				.with(Credentials(&stomp_config.username, &stomp_config.password))
 				.with(SuppressedHeader("host"))
-				.with(Header::new("host", "/"))
+				.with(Header::new("host", &stomp_config.host))
 				.start() {
 					Ok(session) => session,
 					Err(error)  => panic!("Could not connect to the server: {} {}", error, thread_number)
@@ -111,7 +135,7 @@ fn main() {
 
 			info!("started session {:?}", thread_number);
 
-			session.subscription(TOPIC, |frame: &Frame| {
+			session.subscription(&stomp_config.topic, |frame: &Frame| {
 				// deserialize received message from message queue
 				let thread_number = thread_number.clone();
 				let frame_body = String::from_utf8(frame.body.clone()).ok().expect("cannot convert frame body to string");
@@ -152,7 +176,7 @@ fn main() {
 				Ack
 			})
 				.with(AckMode::ClientIndividual)
-				.with(Header::new("prefetch-count", "1"))
+				.with(Header::new("prefetch-count", &stomp_config.prefetch_count.to_string()))
 				.start().ok().expect("unable to start receiving messages")
 			;
 			session.listen().ok().expect("unable to listen"); // Loops infinitely, awaiting messages
@@ -161,11 +185,12 @@ fn main() {
 	}
 
 	let result_backend = thread::spawn(move || {
+		let mysql_config = config.mysql.clone();
 		let opts = MyOpts {
-			tcp_addr: Some("172.17.42.1".to_string()),
-			user: Some("root".to_string()),
-			pass: Some("".to_string()),
-			db_name: Some("worker_results".to_string()),
+			tcp_addr: Some(mysql_config.address),
+			user: Some(mysql_config.username),
+			pass: Some(mysql_config.password),
+			db_name: Some(mysql_config.database.to_string()),
 			..Default::default()
 		};
 		let pool = MyPool::new(opts).unwrap();
