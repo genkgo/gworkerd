@@ -4,5 +4,8 @@ version = "0.1.0"
 authors = [ "Frederik Bosch <development@genkgo.nl>" ]
 
 [dependencies]
-stomp = "~0.10.2"
+flexi_logger = "0.3"
+log = "0.3.1"
+mysql = "0.17.1"
 rustc-serialize = "0.3"
+stomp = "~0.10.2"
