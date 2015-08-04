@@ -5,13 +5,13 @@
         "levels": "gworkerd=info,mysql=warn,stomp=warn"
     },
     "mysql": {
-        "address": "172.17.42.1",
+        "address": "127.0.0.1",
         "username": "root",
         "password": "",
         "database": "worker_results"
     },
     "stomp": {
-        "address": "172.17.0.6",
+        "address": "127.0.0.1",
         "port": 61613,
         "username": "guest",
         "password": "guest",
