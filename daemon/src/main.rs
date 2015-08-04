@@ -197,9 +197,11 @@ fn main() {
 
 		loop {
 			info!("started result backend thread, waiting for message");
+			// insert uuid's the optimized way https://www.percona.com/blog/2014/12/19/store-uuid-optimized-way/
 			let worker = result_backend_rx.recv().unwrap();
-			let mut stmt = pool.prepare(r"INSERT INTO results (id, command, cwd, status, stderr, stdout) VALUES (?, ?, ?, ?, ?, ?)").unwrap();
-			stmt.execute((&worker.request.id, &worker.request.command, &worker.request.cwd, &worker.response.status, &worker.response.stderr, &worker.response.stdout)).unwrap();
+			let mut stmt = pool.prepare(r"INSERT INTO results (id, command, cwd, status, stderr, stdout) VALUES (UNHEX(?), ?, ?, ?, ?, ?)").unwrap();
+			let ordered_uuid = worker.request.id[14..18].to_string() + &worker.request.id[9..13].to_string() + &worker.request.id[0..8].to_string() + &worker.request.id[19..23].to_string() + &worker.request.id[24..].to_string();
+			stmt.execute((&ordered_uuid, &worker.request.command, &worker.request.cwd, &worker.response.status, &worker.response.stderr, &worker.response.stdout)).unwrap();
 			info!("added worker {:?} to result backend", &worker.request.id);
 		}
 	});
