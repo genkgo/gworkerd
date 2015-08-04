@@ -16,7 +16,7 @@
         "username": "guest",
         "password": "guest",
         "host": "/",
-        "topic": "/queue/test_messages",
+        "topic": "/queue/gworkerd",
         "prefetch_count": 1
     }
 }
