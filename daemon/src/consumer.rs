@@ -11,11 +11,6 @@ use self::stomp::subscription::AckMode;
 use self::rustc_serialize::json;
 use worker::Request;
 
-pub trait Consumer {
-	fn subscribe<T>(&mut self, handler: T) -> () where T : Fn(Request);
-	fn listen (&mut self);
-}
-
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 pub struct StompConfig {
 	address: String,
@@ -27,15 +22,16 @@ pub struct StompConfig {
 	prefetch_count: u16
 }
 
-pub struct StompConsumer<'a> {
+pub struct Consumer<'a> {
 	session : Session<'a>,
 	topic: String,
-	prefetch_count: u16
+	prefetch_count: u16,
+	handlers: Vec<Box<Fn(Request)>>
 }
 
-impl <'a> StompConsumer<'a> {
+impl <'a> Consumer<'a> {
 
-	pub fn new (config: StompConfig) -> StompConsumer<'a> {
+	pub fn new (config: &'a StompConfig) -> Consumer<'a> {
 		let mut session = match SessionBuilder::new(&config.address, config.port)
 		.with(Credentials(&config.username, &config.password))
 		.with(SuppressedHeader("host"))
@@ -46,36 +42,39 @@ impl <'a> StompConsumer<'a> {
 			}
 		;
 
-		StompConsumer {
+		Consumer {
 			session: session,
-			topic: config.topic,
-			prefetch_count: config.prefetch_count
+			topic: config.topic.clone(),
+			prefetch_count: config.prefetch_count,
+			handlers: vec![]
 		}
 	}
 
-}
-
-impl <'a>Consumer for StompConsumer<'a> {
-
-	fn subscribe<'b, T>(&mut self, handler: T) -> () where T : Fn(Request) {
-		self.session.subscription(&self.topic, move |frame: &Frame| {
-		// deserialize received message from message queue
-			let frame_body = String::from_utf8(frame.body.clone()).ok().expect("cannot convert frame body to string");
-			let request: Request = json::decode(&frame_body).unwrap();
-
-			// call handler
-			handler(request);
-
-			// let the server know we processed the request
-			Ack
-		})
-			.with(AckMode::ClientIndividual)
-			.with(Header::new("prefetch-count", &self.prefetch_count.to_string()))
-			.start().ok().expect("unable to start receiving messages")
-		;
+	pub fn subscribe<T>(&mut self, handler: T) where T : Fn(Request) + 'static {
+		self.handlers.push(Box::new(handler));
 	}
 
-	fn listen (&mut self) {
+	pub fn listen (&mut self) {
+		{
+			let handlers = &self.handlers;
+			self.session.subscription(&self.topic, move |frame: &Frame| {
+				// deserialize received message from message queue
+				let frame_body = String::from_utf8(frame.body.clone()).ok().expect("cannot convert frame body to string");
+				let request: Request = json::decode(&frame_body).unwrap();
+
+				// call handlers
+				for handler in handlers {
+					handler(request.clone());
+				}
+
+				// let the server know we processed the request
+				Ack
+			})
+				.with(AckMode::ClientIndividual)
+				.with(Header::new("prefetch-count", &self.prefetch_count.to_string()))
+				.start().ok().expect("unable to start receiving messages")
+			;
+		}
 		self.session.listen().ok().expect("unable to listen"); // Loops infinitely, awaiting messages
 	}
 

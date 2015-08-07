@@ -16,9 +16,9 @@ use std::fs::File;
 use std::io::Read;
 use std::sync::mpsc::channel;
 use std::thread;
-use consumer::{StompConfig, StompConsumer, Consumer};
+use consumer::{StompConfig, Consumer};
 use processor::Processor;
-use worker::{Request, Response, Item};
+use worker::{Request, Item};
 
 mod consumer;
 mod processor;
@@ -87,24 +87,28 @@ fn main() {
 	let (result_backend_tx, result_backend_rx) = channel::<Item>();
 
 	for thread_number in 0..config.threads {
-		let tx = result_backend_tx.clone();
 		let stomp_config = config.stomp.clone();
+		let thread_tx = result_backend_tx.clone();
 		let processor = thread::spawn(move || {
 			// connect to message queue
 			let stomp_config = stomp_config.clone();
-			let mut consumer = StompConsumer::new(stomp_config);
-			consumer.subscribe(|request: Request| {
-				info!("Executing {} for cwd {} in thread {}", request.command, request.cwd, thread_number);
+			let mut consumer = Consumer::new(&stomp_config);
+			{
+				let subscription_tx = thread_tx.clone();
+				consumer.subscribe(move |request: Request| {
+					info!("Executing {} for cwd {}", request.command, request.cwd);
 
-				let response = Processor::run(request);
+					let response = Processor::run(request.clone());
 
-				info!("received status: {:?}", &response.status);
-				debug!("received from stdout: {:?}", &response.stdout);
-				debug!("received from stderr: {:?}", &response.stderr);
+					info!("received status: {:?}", &response.status);
+					debug!("received from stdout: {:?}", &response.stdout);
+					debug!("received from stderr: {:?}", &response.stderr);
 
-				let item = worker::Item { request: request, response: response };
-				tx.send(item.clone()).unwrap();
-			});
+					let item = worker::Item { request: request.clone(), response: response };
+					subscription_tx.send(item.clone()).unwrap();
+				});
+			}
+			consumer.listen();
 			info!("started session {:?}", thread_number);
 		});
 		threads.push(processor);

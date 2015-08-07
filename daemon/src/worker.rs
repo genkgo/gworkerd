@@ -1,19 +1,19 @@
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 pub struct Request {
-	id: String,
-	command: String,
-	cwd: String,
+	pub id: String,
+	pub command: String,
+	pub cwd: String,
 }
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 pub struct Response {
-	status: String,
-	stderr: String,
-	stdout: String
+	pub status: String,
+	pub stderr: String,
+	pub stdout: String
 }
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 pub struct Item {
-	request: Request,
-	response: Response
+	pub request: Request,
+	pub response: Response
 }
