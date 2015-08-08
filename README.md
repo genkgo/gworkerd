@@ -6,8 +6,8 @@ Single worker that processes cli jobs with a graphical user interface for feedba
 
 ### Start Message and Result Server
 
-Server shopuld accept the STOMP protocol. It has been tested with Rabbit MQ only. By using the Dockerfile in this repo
-you can start the tested server by the following commands.
+Server should accept the STOMP protocol. It has been tested with Rabbit MQ only. By using the
+[Dockerfile](assets/docker/Dockerfile) in this repo you can start the tested server by the following commands.
 
 ```
 $ docker build --rm -t grabbit .
@@ -64,7 +64,7 @@ Send your to the message queue. The content type of a job should be  application
 
 ```json
 {
-    "id": "d334e01e-14cf-4247-b39a-7c9f417ad64b"
+    "id": "d334e01e-14cf-4247-b39a-7c9f417ad64b",
     "command": "mysqldump",
     "cwd": "/your/directory"
 }
