@@ -9,6 +9,7 @@ use self::stomp::header::{Header, SuppressedHeader};
 use self::stomp::subscription::AckOrNack::Ack;
 use self::stomp::subscription::AckMode;
 use self::rustc_serialize::json;
+use std::mem::replace;
 use worker::Request;
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
@@ -55,26 +56,25 @@ impl <'a> Consumer<'a> {
 	}
 
 	pub fn listen (&mut self) {
-		{
-			let handlers = &self.handlers;
-			self.session.subscription(&self.topic, move |frame: &Frame| {
-				// deserialize received message from message queue
-				let frame_body = String::from_utf8(frame.body.clone()).ok().expect("cannot convert frame body to string");
-				let request: Request = json::decode(&frame_body).unwrap();
+		let handlers = replace(&mut self.handlers, Vec::new());
 
-				// call handlers
-				for handler in handlers {
-					handler(request.clone());
-				}
+		self.session.subscription(&self.topic, move |frame: &Frame| {
+			// deserialize received message from message queue
+			let frame_body = String::from_utf8(frame.body.clone()).ok().expect("cannot convert frame body to string");
+			let request: Request = json::decode(&frame_body).unwrap();
 
-				// let the server know we processed the request
-				Ack
-			})
-				.with(AckMode::ClientIndividual)
-				.with(Header::new("prefetch-count", &self.prefetch_count.to_string()))
-				.start().ok().expect("unable to start receiving messages")
-			;
-		}
+			// call handlers
+			for handler in &handlers {
+				handler(request.clone());
+			}
+
+			// let the server know we processed the request
+			Ack
+		})
+			.with(AckMode::ClientIndividual)
+			.with(Header::new("prefetch-count", &self.prefetch_count.to_string()))
+			.start().ok().expect("unable to start receiving messages")
+		;
 		self.session.listen().ok().expect("unable to listen"); // Loops infinitely, awaiting messages
 	}
 
