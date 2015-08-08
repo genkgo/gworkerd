@@ -6,7 +6,11 @@ use std::default::Default;
 use worker::Item;
 
 pub trait ResultBackend {
-	fn store (&self, worker: &Item);
+	fn store (&self, worker: &Item) -> Result<(), ResultBackendError>;
+}
+
+pub enum ResultBackendError {
+	CannotStoreResult
 }
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
@@ -39,7 +43,7 @@ impl MysqlBackend {
 
 impl ResultBackend for MysqlBackend {
 
-	fn store (&self, worker: &Item) {
+	fn store (&self, worker: &Item) -> Result<(), ResultBackendError> {
 		let request = &worker.request.clone();
 		let response = &worker.response.clone();
 
@@ -51,11 +55,19 @@ impl ResultBackend for MysqlBackend {
 		ordered_uuid.push_str(&request.id[24..]);
 
 		let query = r"INSERT INTO results (id, command, cwd, status, stderr, stdout) VALUES (UNHEX(?), ?, ?, ?, ?, ?)";
-		let mut stmt = self.pool.prepare(query).unwrap();
+		let mut stmt = match self.pool.prepare(query) {
+			Ok(s) => s,
+			Err(_) => return Err(ResultBackendError::CannotStoreResult)
+		};
 
-		stmt.execute(
+		let result = match stmt.execute(
 			(&ordered_uuid, &request.command, &request.cwd, &response.status, &response.stderr, &response.stdout)
-		).unwrap();
+		) {
+			Ok(_) => Ok(()),
+			Err(_) => return Err(ResultBackendError::CannotStoreResult)
+		};
+
+		result
 	}
 
 }

@@ -14,7 +14,7 @@ use std::sync::mpsc::channel;
 use std::thread;
 use worker::{Request, Response, Item};
 use consumer::{StompConfig, StompConsumer, Consumer};
-use result_backend::{MysqlConfig, MysqlBackend, ResultBackend};
+use result_backend::{MysqlConfig, MysqlBackend, ResultBackend, ResultBackendError};
 use processor::Processor;
 
 mod consumer;
@@ -108,8 +108,15 @@ fn main() {
 		let connection = MysqlBackend::new(&config.mysql);
 		loop {
 			let item = result_backend_rx.recv().unwrap();
-			connection.store(&item);
-			info!("added worker {:?} to result backend", item.request.id);
+			match connection.store(&item) {
+				Err(ResultBackendError::CannotStoreResult) => {
+					error!("cannot add {:?} to result backend", item);
+				},
+				Ok(_) => {
+					info!("added {:?} to result backend", item.request.id);
+				}
+			}
+
 		}
 	});
 

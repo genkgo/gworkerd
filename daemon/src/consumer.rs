@@ -6,7 +6,7 @@ use self::stomp::session_builder::SessionBuilder;
 use self::stomp::connection::Credentials;
 use self::stomp::frame::Frame;
 use self::stomp::header::{Header, SuppressedHeader};
-use self::stomp::subscription::AckOrNack::Ack;
+use self::stomp::subscription::AckOrNack::{Ack, Nack};
 use self::stomp::subscription::AckMode;
 use self::rustc_serialize::json;
 use std::mem::replace;
@@ -68,22 +68,26 @@ impl<'a> Consumer for StompConsumer<'a> {
 		let handlers = replace(&mut self.handlers, Vec::new());
 
 		self.session.subscription(&self.topic, move |frame: &Frame| {
-			// deserialize received message from message queue
-			let frame_body = String::from_utf8(frame.body.clone()).ok().expect("cannot convert frame body to string");
-			let request: Request = json::decode(&frame_body).unwrap();
+			let frame_body = match String::from_utf8(frame.body.clone()) {
+				Ok(v) => v,
+				Err(_) => return Nack
+			};
 
-			// call handlers
+			let request: Request = match json::decode(&frame_body) {
+				Ok(v) => v,
+				Err(_) => return Nack
+			};
+
 			for handler in &handlers {
 				handler(request.clone());
 			}
 
-			// let the server know we processed the request
 			Ack
 		})
 			.with(AckMode::ClientIndividual)
 			.with(Header::new("prefetch-count", &self.prefetch_count.to_string()))
 			.start().ok().expect("unable to start receiving messages")
 		;
-		self.session.listen().ok().expect("unable to listen"); // Loops infinitely, awaiting messages
+		self.session.listen().ok().expect("unable to listen");
 	}
 }
