@@ -86,20 +86,20 @@ fn main() {
 			{
 				let subscription_tx = thread_tx.clone();
 				consumer.subscribe(move |request: Request| {
-					info!("Executing {} for cwd {}", request.command, request.cwd);
+					info!("[{:?}] executing {} in cwd {}", request.id, request.command, request.cwd);
 
 					let response : Response = Processor::run(request.clone());
 
-					info!("received status: {:?}", &response.status);
-					debug!("received from stdout: {:?}", &response.stdout);
-					debug!("received from stderr: {:?}", &response.stderr);
+					info!("[{:?}] finished with status: {:?}", request.id, response.status);
+					debug!("[{:?}] finished with stdout: {:?}", request.id, response.stdout);
+					debug!("[{:?}] finished with stderr: {:?}", request.id, response.stderr);
 
 					let item = worker::Item { request: request.clone(), response: response };
 					subscription_tx.send(item.clone()).unwrap();
 				});
 			}
+			info!("start listening for thread {:?}", thread_number);
 			consumer.listen();
-			info!("started session {:?}", thread_number);
 		});
 		threads.push(processor);
 	}
@@ -110,10 +110,10 @@ fn main() {
 			let item = result_backend_rx.recv().unwrap();
 			match connection.store(&item) {
 				Err(ResultBackendError::CannotStoreResult) => {
-					error!("cannot add {:?} to result backend", item);
+					error!("[{:?}] cannot add to result backend", item.request.id);
 				},
 				Ok(_) => {
-					info!("added {:?} to result backend", item.request.id);
+					info!("[{:?}] added to result backend", item.request.id);
 				}
 			}
 
