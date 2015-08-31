@@ -2,6 +2,7 @@ extern crate mysql;
 
 use self::mysql::conn::MyOpts;
 use self::mysql::conn::pool::MyPool;
+use std::clone::Clone;
 use std::default::Default;
 use worker::Item;
 
@@ -21,22 +22,30 @@ pub struct MysqlConfig {
   database: String
 }
 
+impl MysqlConfig {
+
+  pub fn new_pool (&self) -> MyPool {
+    let opts = MyOpts {
+    tcp_addr: Some(self.address.clone()),
+    user: Some(self.username.clone()),
+    pass: Some(self.password.clone()),
+    db_name: Some(self.database.to_string()),
+    ..Default::default()
+    };
+	MyPool::new(opts).unwrap()
+  }
+}
+
+
+#[derive(Clone, Debug)]
 pub struct MysqlBackend {
   pool: MyPool
 }
 
 impl MysqlBackend {
 
-  pub fn new (config: &MysqlConfig) -> MysqlBackend {
-    let opts = MyOpts {
-      tcp_addr: Some(config.address.clone()),
-      user: Some(config.username.clone()),
-      pass: Some(config.password.clone()),
-      db_name: Some(config.database.to_string()),
-      ..Default::default()
-    };
-
-    MysqlBackend { pool: MyPool::new(opts).unwrap() }
+  pub fn new (pool: MyPool) -> MysqlBackend {
+    MysqlBackend { pool: pool }
   }
 
 }

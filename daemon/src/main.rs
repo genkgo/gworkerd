@@ -104,8 +104,9 @@ fn main() {
     threads.push(processor);
   }
 
+  let connection = MysqlBackend::new(config.mysql.new_pool());
   let result_backend = thread::spawn(move || {
-    let connection = MysqlBackend::new(&config.mysql);
+    let connection = connection.clone();
     loop {
       let item = result_backend_rx.recv().unwrap();
       match connection.store(&item) {
