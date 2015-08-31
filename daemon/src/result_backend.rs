@@ -32,7 +32,7 @@ impl MysqlConfig {
     db_name: Some(self.database.to_string()),
     ..Default::default()
     };
-	MyPool::new(opts).unwrap()
+    MyPool::new(opts).unwrap()
   }
 }
 
@@ -63,11 +63,11 @@ impl ResultBackend for MysqlBackend {
     ordered_uuid.push_str(&request.id[19..23]);
     ordered_uuid.push_str(&request.id[24..]);
 
-	let mut command = request.program.clone();
-	command.push_str(" ");
-	for arg in &request.args {
-	  command.push_str(" ");
-	  command.push_str(arg);
+    let mut command = request.program.clone();
+    command.push_str(" ");
+    for arg in &request.args {
+      command.push_str(" ");
+      command.push_str(arg);
     }
 
     let query = r"INSERT INTO results (id, command, cwd, status, stderr, stdout) VALUES (UNHEX(?), ?, ?, ?, ?, ?)";
