@@ -104,9 +104,9 @@ fn main() {
     threads.push(processor);
   }
 
-  let connection = MysqlBackend::new(config.mysql.new_pool());
-  let result_backend = thread::spawn(move || {
-    let connection = connection.clone();
+  let result_connection = MysqlBackend::new(config.mysql.new_pool());
+  let result_thread = thread::spawn(move || {
+    let connection = result_connection.clone();
     loop {
       let item = result_backend_rx.recv().unwrap();
       match connection.store(&item) {
@@ -125,5 +125,5 @@ fn main() {
     item.join().ok().expect("unable to join processor thread");
   }
 
-  result_backend.join().ok().expect("unable to join result backend thread");
+  result_thread.join().ok().expect("unable to join result backend thread");
 }
