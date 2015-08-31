@@ -7,11 +7,14 @@ impl Processor {
 
   pub fn run (request: Request) -> Response {
     // starting process
-    let output = Command::new("sh")
-    .arg("-c")
-    .arg(request.command.clone())
-    .current_dir(request.cwd.clone())
-    .output()
+    let mut command = Command::new(request.program.clone());
+	command.current_dir(request.cwd.clone());
+
+    for arg in &request.args {
+      command.arg(arg);
+    }
+
+    let output = command.output()
     .unwrap_or_else(|e| {
       panic!("failed to execute process: {}", e);
     });

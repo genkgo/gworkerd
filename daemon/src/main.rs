@@ -86,7 +86,7 @@ fn main() {
       {
         let subscription_tx = thread_tx.clone();
         consumer.subscribe(move |request: Request| {
-          info!("[{:?}] executing {} in cwd {}", request.id, request.command, request.cwd);
+          info!("[{:?}] executing {} in cwd {}", request.id, request.program, request.cwd);
 
           let response : Response = Processor::run(request.clone());
 

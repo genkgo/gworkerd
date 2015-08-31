@@ -1,7 +1,8 @@
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 pub struct Request {
   pub id: String,
-  pub command: String,
+  pub program: String,
+  pub args: Vec<String>,
   pub cwd: String,
 }
 

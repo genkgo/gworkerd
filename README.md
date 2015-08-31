@@ -66,6 +66,7 @@ Send your to the message queue. The content type of a job should be  application
 {
     "id": "d334e01e-14cf-4247-b39a-7c9f417ad64b",
     "command": "mysqldump",
+    "arguments": ["--all-databases"],
     "cwd": "/your/directory"
 }
 ```
