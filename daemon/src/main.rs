@@ -109,7 +109,7 @@ fn main() {
     let connection = result_connection.clone();
     loop {
       let item = result_backend_rx.recv().unwrap();
-      match connection.store(&item) {
+      match connection.store(item.to_record()) {
         Err(ResultBackendError::CannotStoreResult) => {
           error!("[{:?}] cannot add to result backend", item.request.id);
         },

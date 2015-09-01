@@ -4,10 +4,10 @@ use self::mysql::conn::MyOpts;
 use self::mysql::conn::pool::MyPool;
 use std::clone::Clone;
 use std::default::Default;
-use worker::Item;
+use worker::Record;
 
 pub trait ResultBackend {
-  fn store (&self, worker: &Item) -> Result<(), ResultBackendError>;
+  fn store (&self, record: Record) -> Result<(), ResultBackendError>;
 }
 
 pub enum ResultBackendError {
@@ -52,9 +52,8 @@ impl MysqlBackend {
 
 impl ResultBackend for MysqlBackend {
 
-  fn store (&self, worker: &Item) -> Result<(), ResultBackendError> {
+  fn store (&self, record: Record) -> Result<(), ResultBackendError> {
     // insert uuid's the optimized way https://www.percona.com/blog/2014/12/19/store-uuid-optimized-way/
-	let record = worker.to_record();
 	let mut ordered_uuid = record.id[14..18].to_string();
     ordered_uuid.push_str(&record.id[9..13]);
     ordered_uuid.push_str(&record.id[0..8]);
