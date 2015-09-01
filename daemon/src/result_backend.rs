@@ -50,16 +50,27 @@ impl MysqlBackend {
 
 }
 
+#[derive(Clone, Debug)]
+pub struct MysqlOptimizedUuid {
+  uuid: String
+}
+
+impl MysqlOptimizedUuid {
+  pub fn from_uuid (uuid: String) -> MysqlOptimizedUuid {
+     // insert uuid's the optimized way https://www.percona.com/blog/2014/12/19/store-uuid-optimized-way/
+     let mut ordered_uuid = uuid[14..18].to_string();
+     ordered_uuid.push_str(&uuid[9..13]);
+     ordered_uuid.push_str(&uuid[0..8]);
+     ordered_uuid.push_str(&uuid[19..23]);
+     ordered_uuid.push_str(&uuid[24..]);
+	 MysqlOptimizedUuid { uuid: ordered_uuid }
+  }
+}
+
 impl ResultBackend for MysqlBackend {
 
   fn store (&self, record: Record) -> Result<(), ResultBackendError> {
-    // insert uuid's the optimized way https://www.percona.com/blog/2014/12/19/store-uuid-optimized-way/
-	let mut ordered_uuid = record.id[14..18].to_string();
-    ordered_uuid.push_str(&record.id[9..13]);
-    ordered_uuid.push_str(&record.id[0..8]);
-    ordered_uuid.push_str(&record.id[19..23]);
-    ordered_uuid.push_str(&record.id[24..]);
-
+    let uuid_optimized = MysqlOptimizedUuid::from_uuid(record.id.clone());
     let query = r"INSERT INTO results (id, command, cwd, status, stderr, stdout) VALUES (UNHEX(?), ?, ?, ?, ?, ?)";
     let mut stmt = match self.pool.prepare(query) {
       Ok(s) => s,
@@ -67,7 +78,7 @@ impl ResultBackend for MysqlBackend {
     };
 
     let result = match stmt.execute(
-      (&ordered_uuid, record.command, record.cwd, record.status, record.stderr, record.stdout)
+      (uuid_optimized.uuid, record.command, record.cwd, record.status, record.stderr, record.stdout)
     ) {
       Ok(_) => Ok(()),
       Err(_) => return Err(ResultBackendError::CannotStoreRecord)
