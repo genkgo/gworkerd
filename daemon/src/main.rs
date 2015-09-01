@@ -110,8 +110,8 @@ fn main() {
     loop {
       let item = result_backend_rx.recv().unwrap();
       match connection.store(item.to_record()) {
-        Err(ResultBackendError::CannotStoreResult) => {
-          error!("[{:?}] cannot add to result backend", item.request.id);
+        Err(ResultBackendError::CannotStoreRecord) => {
+          error!("[{:?}] cannot add record to result backend", item.request.id);
         },
         Ok(_) => {
           info!("[{:?}] added to result backend", item.request.id);

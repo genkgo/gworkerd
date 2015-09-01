@@ -11,7 +11,7 @@ pub trait ResultBackend {
 }
 
 pub enum ResultBackendError {
-  CannotStoreResult
+  CannotStoreRecord
 }
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
@@ -63,14 +63,14 @@ impl ResultBackend for MysqlBackend {
     let query = r"INSERT INTO results (id, command, cwd, status, stderr, stdout) VALUES (UNHEX(?), ?, ?, ?, ?, ?)";
     let mut stmt = match self.pool.prepare(query) {
       Ok(s) => s,
-      Err(_) => return Err(ResultBackendError::CannotStoreResult)
+      Err(_) => return Err(ResultBackendError::CannotStoreRecord)
     };
 
     let result = match stmt.execute(
       (&ordered_uuid, record.command, record.cwd, record.status, record.stderr, record.stdout)
     ) {
       Ok(_) => Ok(()),
-      Err(_) => return Err(ResultBackendError::CannotStoreResult)
+      Err(_) => return Err(ResultBackendError::CannotStoreRecord)
     };
 
     result
