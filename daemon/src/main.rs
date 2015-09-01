@@ -14,7 +14,7 @@ use std::sync::mpsc::channel;
 use std::thread;
 use worker::{Request, Response, Item};
 use consumer::{StompConfig, StompConsumer, Consumer};
-use result_backend::{MysqlConfig, MysqlBackend, ResultBackend, ResultBackendError};
+use result_backend::{MysqlConfig, ResultBackend, ResultBackendError};
 use processor::Processor;
 
 mod consumer;
@@ -104,7 +104,7 @@ fn main() {
     threads.push(processor);
   }
 
-  let result_connection = MysqlBackend::new(config.mysql.new_pool());
+  let result_connection = config.mysql.to_connection();
   let result_thread = thread::spawn(move || {
     let connection = result_connection.clone();
     loop {

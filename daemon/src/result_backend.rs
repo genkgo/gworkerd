@@ -24,7 +24,7 @@ pub struct MysqlConfig {
 
 impl MysqlConfig {
 
-  pub fn new_pool (&self) -> MyPool {
+  pub fn to_connection (&self) -> MysqlBackend {
     let opts = MyOpts {
     tcp_addr: Some(self.address.clone()),
     user: Some(self.username.clone()),
@@ -32,7 +32,7 @@ impl MysqlConfig {
     db_name: Some(self.database.to_string()),
     ..Default::default()
     };
-    MyPool::new(opts).unwrap()
+	MysqlBackend::new(MyPool::new(opts).unwrap())
   }
 }
 
@@ -53,22 +53,13 @@ impl MysqlBackend {
 impl ResultBackend for MysqlBackend {
 
   fn store (&self, worker: &Item) -> Result<(), ResultBackendError> {
-    let request = &worker.request.clone();
-    let response = &worker.response.clone();
-
     // insert uuid's the optimized way https://www.percona.com/blog/2014/12/19/store-uuid-optimized-way/
-    let mut ordered_uuid = request.id[14..18].to_string();
-    ordered_uuid.push_str(&request.id[9..13]);
-    ordered_uuid.push_str(&request.id[0..8]);
-    ordered_uuid.push_str(&request.id[19..23]);
-    ordered_uuid.push_str(&request.id[24..]);
-
-    let mut command = request.program.clone();
-    command.push_str(" ");
-    for arg in &request.args {
-      command.push_str(" ");
-      command.push_str(arg);
-    }
+	let record = worker.to_record();
+	let mut ordered_uuid = record.id[14..18].to_string();
+    ordered_uuid.push_str(&record.id[9..13]);
+    ordered_uuid.push_str(&record.id[0..8]);
+    ordered_uuid.push_str(&record.id[19..23]);
+    ordered_uuid.push_str(&record.id[24..]);
 
     let query = r"INSERT INTO results (id, command, cwd, status, stderr, stdout) VALUES (UNHEX(?), ?, ?, ?, ?, ?)";
     let mut stmt = match self.pool.prepare(query) {
@@ -77,7 +68,7 @@ impl ResultBackend for MysqlBackend {
     };
 
     let result = match stmt.execute(
-      (&ordered_uuid, command, &request.cwd, &response.status, &response.stderr, &response.stdout)
+      (&ordered_uuid, record.command, record.cwd, record.status, record.stderr, record.stdout)
     ) {
       Ok(_) => Ok(()),
       Err(_) => return Err(ResultBackendError::CannotStoreResult)
