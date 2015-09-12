@@ -58,12 +58,25 @@ pub struct MysqlOptimizedUuid {
 impl MysqlOptimizedUuid {
   pub fn from_uuid (uuid: String) -> MysqlOptimizedUuid {
      // insert uuid's the optimized way https://www.percona.com/blog/2014/12/19/store-uuid-optimized-way/
-     let mut ordered_uuid = uuid[14..18].to_string();
-     ordered_uuid.push_str(&uuid[9..13]);
-     ordered_uuid.push_str(&uuid[0..8]);
-     ordered_uuid.push_str(&uuid[19..23]);
-     ordered_uuid.push_str(&uuid[24..]);
-	 MysqlOptimizedUuid { uuid: ordered_uuid }
+    let mut ordered_uuid = uuid[14..18].to_string();
+    ordered_uuid.push_str(&uuid[9..13]);
+    ordered_uuid.push_str(&uuid[0..8]);
+    ordered_uuid.push_str(&uuid[19..23]);
+    ordered_uuid.push_str(&uuid[24..]);
+    MysqlOptimizedUuid { uuid: ordered_uuid }
+  }
+
+  pub fn to_uuid (&self) -> String {
+    let mut uuid = self.uuid[8..16].to_string();
+    uuid.push_str("-");
+    uuid.push_str(&self.uuid[4..8]);
+    uuid.push_str("-");
+    uuid.push_str(&self.uuid[0..4]);
+    uuid.push_str("-");
+    uuid.push_str(&self.uuid[16..20]);
+    uuid.push_str("-");
+    uuid.push_str(&self.uuid[20..]);
+    uuid
   }
 }
 
@@ -87,4 +100,16 @@ impl ResultBackend for MysqlBackend {
     result
   }
 
+}
+
+#[cfg(test)]
+mod tests {
+  use super::MysqlOptimizedUuid;
+
+  #[test]
+  fn optimized_uuid() {
+    let uuid = String::from("58e0a7d7-eebc-11d8-9669-0800200c9a66");
+    let optimized_uuid = MysqlOptimizedUuid::from_uuid(uuid);
+    assert_eq!("58e0a7d7-eebc-11d8-9669-0800200c9a66", optimized_uuid.to_uuid());
+  }
 }
