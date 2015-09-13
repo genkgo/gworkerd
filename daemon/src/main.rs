@@ -14,13 +14,13 @@ use std::sync::mpsc::channel;
 use std::thread;
 use worker::{Request, Response, Item};
 use consumer::{StompConfig, StompConsumer, Consumer};
-use result_backend::{MysqlConfig, ResultBackend, ResultBackendError};
+use record_backend::{MysqlConfig, RecordRepository, RecordRepositoryError};
 use processor::Processor;
 
 mod consumer;
 mod processor;
 mod worker;
-mod result_backend;
+mod record_backend;
 
 // Write the Docopt usage string.
 static USAGE: &'static str = "
@@ -74,11 +74,11 @@ fn main() {
   ).unwrap_or_else(|e|{panic!("Logger initialization failed with {}",e)});
 
   let mut threads = vec![];
-  let (result_backend_tx, result_backend_rx) = channel::<Item>();
+  let (record_store_tx, record_store_rx) = channel::<Item>();
 
   for thread_number in 0..config.threads {
     let stomp_config = config.stomp.clone();
-    let thread_tx = result_backend_tx.clone();
+    let thread_tx = record_store_tx.clone();
     let processor = thread::spawn(move || {
       // connect to message queue
       let stomp_config = stomp_config.clone();
@@ -104,14 +104,17 @@ fn main() {
     threads.push(processor);
   }
 
-  let result_connection = config.mysql.to_connection();
-  let result_thread = thread::spawn(move || {
-    let connection = result_connection.clone();
+  let record_connection = config.mysql.to_connection();
+  let record_store_thread = thread::spawn(move || {
+    let connection = record_connection.clone();
     loop {
-      let item = result_backend_rx.recv().unwrap();
+      let item = record_store_rx.recv().unwrap();
       match connection.store(item.to_record()) {
-        Err(ResultBackendError::CannotStoreRecord) => {
+        Err(RecordRepositoryError::CannotStoreRecord) => {
           error!("[{:?}] cannot add record to result backend", item.request.id);
+        },
+        Err(_) => {
+          error!("[{:?}] unknown error occured", item.request.id);
         },
         Ok(_) => {
           info!("[{:?}] added to result backend", item.request.id);
@@ -125,5 +128,5 @@ fn main() {
     item.join().ok().expect("unable to join processor thread");
   }
 
-  result_thread.join().ok().expect("unable to join result backend thread");
+  record_store_thread.join().ok().expect("unable to join result backend thread");
 }
