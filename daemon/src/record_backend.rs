@@ -15,10 +15,12 @@ pub trait RecordRepository {
   fn fetch_limit (&self, size: u32, offset: u32) -> Result<(Vec<Record>), RecordRepositoryError>;
 }
 
+#[derive(Debug)]
 pub enum RecordRepositoryError {
   CannotStoreRecord,
   CannotFetchRecord,
-  CannotDenormalizeRecord
+  CannotDenormalizeRecord,
+  RecordNotFound
 }
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
@@ -78,7 +80,7 @@ pub struct MysqlOptimizedUuid {
 impl MysqlOptimizedUuid {
 
   pub fn from_uuid (uuid: String) -> MysqlOptimizedUuid {
-     // insert uuid's the optimized way https://www.percona.com/blog/2014/12/19/store-uuid-optimized-way/
+     // the optimized way https://www.percona.com/blog/2014/12/19/store-uuid-optimized-way/
     let mut ordered_uuid = uuid[14..18].to_string();
     ordered_uuid.push_str(&uuid[9..13]);
     ordered_uuid.push_str(&uuid[0..8]);
@@ -166,11 +168,12 @@ impl RecordRepository for MysqlRepository {
       Err(_) => return Err(RecordRepositoryError::CannotDenormalizeRecord)
     };
 
-    let result: Result<(Record), RecordRepositoryError> = match results {
-      Ok(records) => {
+    let records: Vec<Record> = results.unwrap();
+    let result: Result<(Record), RecordRepositoryError> = match records.len() {
+      1 => {
         Ok(records[0].clone())
       },
-      Err(_) => return Err(RecordRepositoryError::CannotDenormalizeRecord)
+      _ => return Err(RecordRepositoryError::RecordNotFound)
     };
 
     result
@@ -185,6 +188,7 @@ mod tests {
   fn optimized_uuid() {
     let uuid = String::from("58e0a7d7-eebc-11d8-9669-0800200c9a66");
     let optimized_uuid = MysqlOptimizedUuid::from_uuid(uuid);
+    assert_eq!("11d8eebc58e0a7d796690800200c9a66", optimized_uuid.uuid);
     assert_eq!("58e0a7d7-eebc-11d8-9669-0800200c9a66", optimized_uuid.to_uuid());
   }
 }
