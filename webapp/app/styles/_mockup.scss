@@ -1,29 +1,81 @@
+$color--main: #00AAAD;
+$color--white: #ecf0f1;
+$color--black: #2c3e50;
+$color--body: #34495e;
+
+$color--status--on: #27ae60;
+$color--status--off: #e74c3c;
+
+body {
+	margin: 0;
+	font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 1.6em;
+	background-color: $color--body;
+	color: $color--white;
+}
+a {
+	color: $color--main;
+	text-decoration: none;
+}
 header {
-  position: fixed;
-  top:0;
-}
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	padding: 1em;
+	height: 4em;
+	box-sizing: border-box;
+	background-color: rgba(0,0,0,0.8);
+	color: $color--white;
+	z-index: 10;
 
+	h1, h2 {
+		margin: 0;
+	}
+
+	h1 {
+		font-size: 2em;
+		line-height: 100%;
+	}
+}
 nav {
-  position:fixed;
-  top: 2em;
-  left:12em;
+	position: fixed;
+	z-index: 20;
+	top: 0;
+	right: 0;
+	line-height: 4em;
+	height: 4em;
 
-  a {
-    margin: 0 2em;
-  }
+	a {
+		color: $color--white;
+		padding: 0 1em;
+		line-height: 4em;
+		display: inline-block;
+		vertical-align: top;
+		height: 4em;
+		font-weight: bold;
+	}
+	a.active {
+		background: $color--body;
+	}
 }
-
 main {
-  margin-top: 9em;
+	position: relative;
+	top: 4em;
+	padding: 1em;
 }
-
 footer {
-  position: fixed;
-  bottom: 0px;
-  height: 2em;
-  background: #FFF none repeat scroll 0% 0%;
-  z-index: 10;
-  width: 100%;
-  padding: 1em;
-  text-align: center;
+	position: fixed;
+	bottom: 0px;
+	left: 0;
+	right: 0;
+	background: rgba(0,0,0,0.9);
+	color: $color--white;
+	height: 2em;
+	line-height: 2em;
+	z-index: 10;
+	width: 100%;
+	text-align: center;
 }

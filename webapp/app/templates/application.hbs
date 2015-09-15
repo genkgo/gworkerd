@@ -1,12 +1,5 @@
 <header>
     <h1>Gworkerd</h1>
-    <h2>
-        {{#if connected}}
-            connected to {{model.hostname}} ({{model.ip}})
-        {{else}}
-            disconnected
-        {{/if}}
-    </h2>
 </header>
 <nav>
     {{#link-to 'index'}}Dashboard{{/link-to}}
@@ -14,8 +7,15 @@
     {{#link-to 'jobs' (query-params status="failed")}}Failed{{/link-to}}
     {{#link-to 'jobs' (query-params status="busy")}}Busy{{/link-to}}
 </nav>
-
 <main>
+    <div class="status--output">
+        {{#if connected}}
+            <span class="message connected">connected to <span class="hostname">{{model.hostname}}</span><span class="ip-address">({{model.ip}})</span></span>
+        {{else}}
+            <span class="message disconnected">disconnected</span>
+        {{/if}}
+    </div>
+
     {{outlet}}
 </main>
 

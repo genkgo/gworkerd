@@ -7,7 +7,6 @@ export default Ember.Controller.extend({
 
   init: function() {
     this._super.apply(this, arguments);
-
     return;
     var controller = this;
     var socket = this.get('socketService').socketFor(ENV.APP.data.socket);

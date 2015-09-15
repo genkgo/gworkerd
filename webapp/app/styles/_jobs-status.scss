@@ -1,0 +1,26 @@
+div.status--output {
+	display: block;
+	padding: 0.5em 0;
+	position: fixed;
+	top: 0em;
+	left: 12em;
+	z-index: 20;
+
+	.message {
+		display: inline-block;
+		border: 2px solid;
+		padding: 0.5em 1em;
+		height: 3em;
+		box-sizing: border-box;
+		font-weight: 700;
+		text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+		&.connected {
+			color: $color--status--on;
+		}
+		&.disconnected {
+			color: $color--status--off;
+		}
+	}
+}
