@@ -22,7 +22,7 @@
         </tr>
     </thead>
     <tbody>
-        {{#each result in model.results}}
+        {{#each model.results as |result|}}
             <tr>
                 <td>{{result.exitCode}}</td>
                 <td>{{datetime-format result.startedAt}}</td>

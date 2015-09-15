@@ -5,5 +5,7 @@ export default DS.RESTSerializer.extend(
     attrs: {
       results: { embedded: 'always' }
     }
-  }
+  }, {
+      isNewSerializerAPI: true
+    }
 );

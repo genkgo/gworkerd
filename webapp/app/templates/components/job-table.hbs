@@ -7,7 +7,7 @@
         </tr>
     </thead>
     <tbody>
-        {{#each job in jobs}}
+        {{#each jobs as |job|}}
             <tr class="{{job.status}}">
                 <td class="identifier">{{#link-to 'job' job}}{{job.id}}{{/link-to}}</td>
                 <td class="command">{{job.command}}</td>
