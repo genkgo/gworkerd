@@ -1,0 +1,120 @@
+.job--output {
+	border: 2px solid #f7f7f7;
+	padding: 2em;
+	background-position: 1em 1em;
+	background-size: 2em;
+	background-repeat: no-repeat;
+	max-width: 80em;
+	margin: 2em auto;
+	animation: fadeInUp .25s;
+
+	h2 {
+		margin-top: 2em;
+	}
+
+	&.failed {
+		h1 strong {
+			color: $color--status--off;
+		}
+		table.meta tr:last-of-type td:last-of-type {
+			background-color: $color--status--off;
+		}
+	}
+	&.successful {
+		h1 strong {
+			color: $color--status--on;
+		}
+		table.meta tr:last-of-type td:last-of-type {
+			background-color: $color--status--on;
+		}
+	}
+
+	h1 {
+		font-weight: 400;
+		text-align: center;
+	}
+}
+
+
+.job--output table {
+	width: 100%;
+}
+
+.job--output .about,
+.job--output .results {
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 2em;
+}
+.job--output .about {
+	width: 40%;
+}
+.job--output .results {
+	box-sizing: border-box;
+	width: 60%;
+	padding-left: 2em;
+
+	table.result {
+		tbody td {
+			border-right: 2px solid rgba(0,0,0,0.1);
+
+			&:last-of-type {
+				border-right: 0;
+			}
+		}
+	}
+}
+
+.job--output .output--view {
+	> div {
+		display: inline-block;
+		margin-right: 2em;
+	}
+
+	.modal {
+		z-index: 40;
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+
+		.close {
+			background-color: rgba(0,0,0,0.25);
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			display: block;
+			z-index: 10;
+			text-indent: 100%;
+			overflow: hidden;
+			white-space: nowrap;
+			animation: fadeInUp .25s;
+		}
+		figure {
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			z-index: 20;
+			margin: 6em;
+			border-top: 2em solid $color--white;
+			background-color: rgba(0,0,0,0.9);
+			color: $color--white;
+			padding: 1em;
+			box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+			animation: fadeInUp .375s;
+			animation-delay: .125s;
+			animation-fill-mode: both;
+		}
+		figure code {
+			font-family: 'Source Code Pro', courier, monospace;
+			font-size: 1em;
+		}
+	}
+}

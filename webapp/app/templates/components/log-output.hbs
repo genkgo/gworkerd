@@ -1,8 +1,10 @@
-<a href="#" {{action 'show'}}>{{name}}</a>
+<a href="#" class="button" {{action 'show'}}>{{name}}</a>
 
 {{#if displayed}}
     <div class="modal">
-        <a href="#" {{action 'close'}}>close</a>
-        <textarea>{{output}}</textarea>
+        <a href="#" class="close" {{action 'close'}} />
+        <figure>
+            <code>{{output}}</code>
+        </figure>
     </div>
 {{/if}}

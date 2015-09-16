@@ -1,42 +1,61 @@
-<h1>Job {{model.id}}</h1>
-<dl class="job">
-    <dt>Command</dt>
-    <dd>{{model.command}}</dd>
-    <dt>Attempts</dt>
-    <dd>{{model.attempts}}</dd>
-    <dt>Nicer</dt>
-    <dd>{{model.nicer}}</dd>
-    <dt>Status</dt>
-    <dd>{{model.status}}</dd>
-</dl>
+<div class="job--output {{model.status}}">
+    <h1>Job <strong>{{model.id}}</strong></h1>
 
-<h2>Results</h2>
-<table class="result">
-    <thead>
-        <tr>
-            <th>Exit code</th>
-            <th>Started at</th>
-            <th>Finished at</th>
-            <th>Duration in sec</th>
-            <th>Log output</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each model.results as |result|}}
+    <div class="about">
+        <h2>Job</h2>
+        <table class="meta">
+            <tbody>
             <tr>
-                <td>{{result.exitCode}}</td>
-                <td>{{datetime-format result.startedAt}}</td>
-                <td>{{datetime-format result.finishedAt}}</td>
-                <td>{{result.duration}}s</td>
-                <td>
-                    {{#if result.stdout}}
-                        {{log-output name='stdout' output=result.stdout}}
-                    {{/if}}
-                    {{#if result.stderr}}
-                        {{log-output name='stderr' output=result.stderr}}
-                    {{/if}}
-                </td>
+                <th>Command</th>
+                <td>{{model.command}}</td>
             </tr>
-        {{/each}}
-    </tbody>
-</table>
+            <tr>
+                <th>Attempts</th>
+                <td>{{model.attempts}}</td>
+            </tr>
+            <tr>
+                <th>Nicer</th>
+                <td>{{model.nicer}}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{model.status}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div><div class="results">
+        <h2>Results</h2>
+        <table class="result">
+            <thead>
+            <tr>
+                <th>Exit code</th>
+                <th>Started at</th>
+                <th>Finished at</th>
+                <th>Duration in sec</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each model.results as |result|}}
+                <tr>
+                    <td>{{result.exitCode}}</td>
+                    <td>{{datetime-format result.startedAt}}</td>
+                    <td>{{datetime-format result.finishedAt}}</td>
+                    <td>{{result.duration}}s</td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+        <h2>Log output</h2>
+
+        <div class="output--view">
+            {{#each model.results as |result|}}
+                {{#if result.stdout}}
+                    {{log-output name='stdout' output=result.stdout}}
+                {{/if}}
+                {{#if result.stderr}}
+                    {{log-output name='stderr' output=result.stderr}}
+                {{/if}}
+            {{/each}}
+        </div>
+    </div>
+</div>

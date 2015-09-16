@@ -1,16 +1,17 @@
 <header>
-    <h1>Gworkerd</h1>
+    <span class="logo">Gworkerd</span>
 </header>
-<nav>
-    {{#link-to 'index'}}Dashboard{{/link-to}}
-    {{#link-to 'jobs' (query-params status="successful")}}Processed{{/link-to}}
-    {{#link-to 'jobs' (query-params status="failed")}}Failed{{/link-to}}
-    {{#link-to 'jobs' (query-params status="busy")}}Busy{{/link-to}}
+<nav class="main--navigation">
+    {{#link-to 'index' class="dashboard"}}<span>Dashboard</span>{{/link-to}}
+    {{#link-to 'jobs' (query-params status="successful") class="successful"}}<span>Processed</span>{{/link-to}}
+    {{#link-to 'jobs' (query-params status="failed") class="failed"}}<span>Failed</span>{{/link-to}}
+    {{#link-to 'jobs' (query-params status="busy") class="busy"}}<span>Busy</span>{{/link-to}}
 </nav>
 <main>
     <div class="status--output">
         {{#if connected}}
-            <span class="message connected">connected to <span class="hostname">{{model.hostname}}</span><span class="ip-address">({{model.ip}})</span></span>
+            <span class="message connected">connected to <span class="hostname">{{model.hostname}}</span><span
+                    class="ip-address">({{model.ip}})</span></span>
         {{else}}
             <span class="message disconnected">disconnected</span>
         {{/if}}
@@ -19,4 +20,6 @@
     {{outlet}}
 </main>
 
-<footer>Started At: {{datetime-format model.started}} - Gworkerd {{model.version}}</footer>
+<footer>Started At: {{datetime-format model.started}} - Gworkerd {{model.version}} is made by <a
+        href="https://genkgo.com" class="genkgo-refferal"><img
+        src="https://static.genkgo.com/branding/genkgo/logo_alt.svg" alt="Genkgo B.V."/></a></footer>

@@ -1,42 +1,36 @@
 table.jobs {
-	width: 100%;
-	text-align: left;
-
-	td, th {
-		padding: 0.5em 0.25em;
-	}
-
-	th {
-		border: 0;
-		background-color: rgba(0, 0, 0, 0.25);
+	th.identifier {
+		@extend %before-icon;
+		&:before {
+			background-image: url('https://static.genkgo.com/entypo-plus/svg/F7F7F7/dots-three-horizontal.svg');
+		}
 	}
 }
 
 table.jobs tbody {
 	tr td {
 		width: 50%;
-		border-bottom: 1px solid rgba(0,0,0,0.1);
-
-		&:first-of-type {
-			border-right: 2px solid rgba(0,0,0,0.1);
-		}
 	}
-
+	td.identifier {
+		@extend %before-icon;
+		color: $color--white;
+	}
 	tr.successful td.identifier {
 		color: $color--status--on;
+		&:before {
+			background-image: url('https://static.genkgo.com/entypo-plus/svg/27AE60/check.svg');
+		}
 	}
 	tr.failed td.identifier {
 		color: $color--status--off;
+		&:before {
+			background-image: url('https://static.genkgo.com/entypo-plus/svg/E74C3C/circle-with-cross.svg');
+		}
 	}
 	tr.busy td.identifier {
-		color: $color--white;
-	}
-
-	td.identifier:before {
-		content: ' \25CF';
-		font-size: 1em;
-		margin-right: 1em;
-		color: inherit;
+		&:before {
+			background-image: url('https://static.genkgo.com/entypo-plus/svg/F7F7F7/hour-glass.svg');
+		}
 	}
 	td.identifier a {
 		color: inherit;

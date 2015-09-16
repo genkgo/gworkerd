@@ -1,18 +1,16 @@
 <table class="jobs">
     <thead>
-        <tr>
-            <th class="identifier">ID</th>
-            <th class="command">Command</th>
-            <!--<th class="attempts">Attempts</th>-->
-        </tr>
+    <tr>
+        <th class="identifier">ID</th>
+        <th class="command">Command</th>
+    </tr>
     </thead>
     <tbody>
-        {{#each jobs as |job|}}
-            <tr class="{{job.status}}">
-                <td class="identifier">{{#link-to 'job' job}}{{job.id}}{{/link-to}}</td>
-                <td class="command">{{job.command}}</td>
-                <!--<td class="attempts">{{job.attempts}}</td>-->
-            </tr>
-        {{/each}}
+    {{#each jobs as |job|}}
+        <tr class="{{job.status}}">
+            <td class="identifier">{{#link-to 'job' job}}{{job.id}}{{/link-to}}</td>
+            <td class="command">{{job.command}}</td>
+        </tr>
+    {{/each}}
     </tbody>
 </table>

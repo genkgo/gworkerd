@@ -1,10 +1,18 @@
 $color--main: #00AAAD;
 $color--white: #ecf0f1;
-$color--black: #2c3e50;
-$color--body: #34495e;
+$color--black: #152734;
+$color--body: #2d3f51;
 
 $color--status--on: #27ae60;
 $color--status--off: #e74c3c;
+
+body,
+header,
+main,
+footer {
+	min-width: 768px;
+	transition: all .25s;
+}
 
 body {
 	margin: 0;
@@ -14,6 +22,11 @@ body {
 	line-height: 1.6em;
 	background-color: $color--body;
 	color: $color--white;
+}
+@media screen and (min-width: 1200px) {
+	body {
+		font-size: 17px;
+	}
 }
 a {
 	color: $color--main;
@@ -31,34 +44,13 @@ header {
 	color: $color--white;
 	z-index: 10;
 
-	h1, h2 {
+	.logo {
 		margin: 0;
-	}
-
-	h1 {
 		font-size: 2em;
 		line-height: 100%;
-	}
-}
-nav {
-	position: fixed;
-	z-index: 20;
-	top: 0;
-	right: 0;
-	line-height: 4em;
-	height: 4em;
-
-	a {
-		color: $color--white;
-		padding: 0 1em;
-		line-height: 4em;
-		display: inline-block;
-		vertical-align: top;
-		height: 4em;
-		font-weight: bold;
-	}
-	a.active {
-		background: $color--body;
+		padding-left: 1.5em;
+		background: url('https://static.genkgo.com/branding/genkgo/logo_rondo_alt.svg') no-repeat center left;
+		background-size: auto 100%;
 	}
 }
 main {
@@ -67,15 +59,30 @@ main {
 	padding: 1em;
 }
 footer {
+	font-size: 80%;
 	position: fixed;
 	bottom: 0px;
 	left: 0;
 	right: 0;
 	background: rgba(0,0,0,0.9);
 	color: $color--white;
-	height: 2em;
-	line-height: 2em;
 	z-index: 10;
 	width: 100%;
 	text-align: center;
+	padding: 0.5em 0;
+
+	.genkgo-refferal {
+		display: inline-block;
+		vertical-align: middle;
+		height: 1.75em;
+		margin-left: 0.25em;
+		position: relative;
+		top: -0.125em;
+
+		img {
+			display: block;
+			height: 100%;
+			width: auto;
+		}
+	}
 }
