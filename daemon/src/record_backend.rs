@@ -58,7 +58,7 @@ impl MysqlRepository {
   }
 
   fn row_to_record (&self, row: MyResult<Vec<Value>>) -> Record {
-    let (id, command, cwd, status, stderr, stdout) = from_row(row.unwrap());
+    let (id, command, cwd, status, stderr, stdout, started_at, finished_at) = from_row(row.unwrap());
     let optimized_uuid = MysqlOptimizedUuid { uuid: id };
     Record {
       id: optimized_uuid.to_uuid(),
@@ -66,7 +66,9 @@ impl MysqlRepository {
       cwd: cwd,
       status: status,
       stderr: stderr,
-      stdout: stdout
+      stdout: stdout,
+      started_at: started_at,
+      finished_at: finished_at
     }
   }
 
@@ -108,7 +110,7 @@ impl RecordRepository for MysqlRepository {
   fn store (&self, record: Record) -> Result<(), RecordRepositoryError> {
     let uuid_optimized = MysqlOptimizedUuid::from_uuid(record.id.clone());
 
-    let query = r"INSERT INTO results (id, command, cwd, status, stderr, stdout) VALUES (UNHEX(?), ?, ?, ?, ?, ?)";
+    let query = r"INSERT INTO results (id, command, cwd, status, stderr, stdout, started_at, finished_at) VALUES (UNHEX(?), ?, ?, ?, ?, ?, ?, ?)";
 
     let mut stmt = match self.pool.prepare(query) {
       Ok(s) => s,
@@ -126,7 +128,7 @@ impl RecordRepository for MysqlRepository {
   }
 
   fn fetch_limit (&self, size: u32, limit: u32) -> Result<(Vec<Record>), RecordRepositoryError> {
-    let query = r"SELECT HEX(id) AS id, command, cwd, status, stderr, stdout FROM results LIMIT ? OFFSET ?";
+    let query = r"SELECT HEX(id) AS id, command, cwd, status, stderr, stdout,started_at, finished_at FROM results LIMIT ? OFFSET ?";
 
     let mut stmt = match self.pool.prepare(query) {
       Ok(s) => s,

@@ -1,4 +1,10 @@
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
+pub struct Period {
+  pub started_at: String,
+  pub finished_at: String
+}
+
+#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 pub struct Request {
   pub id: String,
   pub program: String,
@@ -10,7 +16,8 @@ pub struct Request {
 pub struct Response {
   pub status: String,
   pub stderr: String,
-  pub stdout: String
+  pub stdout: String,
+  pub period: Period
 }
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
@@ -35,7 +42,9 @@ impl Item {
       cwd: self.request.cwd.clone(),
       status: self.response.status.clone(),
       stderr: self.response.stderr.clone(),
-      stdout: self.response.stdout.clone()
+      stdout: self.response.stdout.clone(),
+      started_at: self.response.period.started_at.clone(),
+      finished_at: self.response.period.finished_at.clone()
     }
   }
 }
@@ -47,5 +56,7 @@ pub struct Record {
   pub cwd: String,
   pub status: String,
   pub stderr: String,
-  pub stdout: String
+  pub stdout: String,
+  pub started_at: String,
+  pub finished_at: String
 }

@@ -4,6 +4,8 @@ CREATE TABLE `results` (
   `cwd` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `stdout` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `stderr` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `started_at` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `finished_at` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `status` smallint(4) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
