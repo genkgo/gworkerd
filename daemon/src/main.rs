@@ -124,7 +124,7 @@ fn main() {
   }
 
   {
-    let connection = Box::new(record_connection.clone());
+    let connection = record_connection.clone();
     let monitor_thread = thread::spawn(move || {
       let mut http_server = HttpServer::new(config.monitor.clone(), connection);
       http_server.listen();
