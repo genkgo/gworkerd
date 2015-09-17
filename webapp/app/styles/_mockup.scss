@@ -41,8 +41,11 @@ header {
 	height: 4em;
 	box-sizing: border-box;
 	background-color: rgba(0,0,0,0.8);
-	color: $color--white;
 	z-index: 10;
+
+    a {
+        color: $color--white;
+    }
 
 	.logo {
 		margin: 0;
@@ -57,6 +60,7 @@ main {
 	position: relative;
 	top: 4em;
 	padding: 1em;
+    padding-bottom: 5em;
 }
 footer {
 	font-size: 80%;

@@ -10,14 +10,6 @@
                 <td>{{model.command}}</td>
             </tr>
             <tr>
-                <th>Attempts</th>
-                <td>{{model.attempts}}</td>
-            </tr>
-            <tr>
-                <th>Nicer</th>
-                <td>{{model.nicer}}</td>
-            </tr>
-            <tr>
                 <th>Status</th>
                 <td>{{model.status}}</td>
             </tr>
@@ -35,27 +27,23 @@
             </tr>
             </thead>
             <tbody>
-            {{#each model.results as |result|}}
                 <tr>
-                    <td>{{result.exitCode}}</td>
-                    <td>{{datetime-format result.startedAt}}</td>
-                    <td>{{datetime-format result.finishedAt}}</td>
-                    <td>{{result.duration}}s</td>
+                    <td>{{model.exitCode}}</td>
+                    <td>{{datetime-format model.startedAt}}</td>
+                    <td>{{datetime-format model.finishedAt}}</td>
+                    <td>{{model.duration}}s</td>
                 </tr>
-            {{/each}}
             </tbody>
         </table>
         <h2>Log output</h2>
 
         <div class="output--view">
-            {{#each model.results as |result|}}
-                {{#if result.stdout}}
-                    {{log-output name='stdout' output=result.stdout}}
-                {{/if}}
-                {{#if result.stderr}}
-                    {{log-output name='stderr' output=result.stderr}}
-                {{/if}}
-            {{/each}}
+            {{#if model.stdout}}
+                {{log-output name='stdout' output=model.stdout}}
+            {{/if}}
+            {{#if model.stderr}}
+                {{log-output name='stderr' output=model.stderr}}
+            {{/if}}
         </div>
     </div>
 </div>
