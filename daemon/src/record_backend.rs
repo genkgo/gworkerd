@@ -1,5 +1,8 @@
+extern crate chrono;
 extern crate mysql;
 
+use self::chrono::UTC;
+use self::chrono::offset::TimeZone;
 use self::mysql::conn::MyOpts;
 use self::mysql::conn::pool::MyPool;
 use self::mysql::error::MyResult;
@@ -58,8 +61,16 @@ impl MysqlRepository {
   }
 
   fn row_to_record (&self, row: MyResult<Vec<Value>>) -> Record {
-    let (id, command, cwd, status, stderr, stdout, started_at, finished_at) = from_row(row.unwrap());
+    let row_data = from_row(row.unwrap());
+    let (id, command, cwd, status, stderr, stdout, started_at_col, finished_at_col) = row_data;
+
+    let started_at_encoded: String = started_at_col;
+    let finished_at_encoded: String = finished_at_col;
+    let started_at = UTC.datetime_from_str(&started_at_encoded, "%Y-%m-%d %H:%M:%S").unwrap();
+    let finished_at = UTC.datetime_from_str(&finished_at_encoded, "%Y-%m-%d %H:%M:%S").unwrap();
+
     let optimized_uuid = MysqlOptimizedUuid { uuid: id };
+
     Record {
       id: optimized_uuid.to_uuid(),
       command: command,
@@ -118,7 +129,9 @@ impl RecordRepository for MysqlRepository {
     };
 
     let result = match stmt.execute(
-      (uuid_optimized.uuid, record.command, record.cwd, record.status, record.stderr, record.stdout)
+      (uuid_optimized.uuid, record.command, record.cwd, record.status, record.stderr,
+        record.stdout, record.started_at.format("%Y-%m-%d %H:%M:%S").to_string(), record.finished_at.format("%Y-%m-%d %H:%M:%S").to_string()
+      )
     ) {
       Ok(_) => Ok(()),
       Err(_) => return Err(RecordRepositoryError::CannotStoreRecord)

@@ -1,10 +1,14 @@
-#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
+extern crate chrono;
+
+use self::chrono::{DateTime, UTC};
+
+#[derive(Debug, Clone)]
 pub struct Period {
-  pub started_at: String,
-  pub finished_at: String
+  pub started_at: chrono::DateTime<UTC>,
+  pub finished_at: chrono::DateTime<UTC>
 }
 
-#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Clone, RustcDecodable)]
 pub struct Request {
   pub id: String,
   pub program: String,
@@ -12,7 +16,7 @@ pub struct Request {
   pub cwd: String
 }
 
-#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Clone)]
 pub struct Response {
   pub status: String,
   pub stderr: String,
@@ -20,7 +24,7 @@ pub struct Response {
   pub period: Period
 }
 
-#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Clone)]
 pub struct Item {
   pub request: Request,
   pub response: Response
@@ -49,7 +53,7 @@ impl Item {
   }
 }
 
-#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Clone)]
 pub struct Record {
   pub id: String,
   pub command: String,
@@ -57,6 +61,6 @@ pub struct Record {
   pub status: String,
   pub stderr: String,
   pub stdout: String,
-  pub started_at: String,
-  pub finished_at: String
+  pub started_at: chrono::DateTime<UTC>,
+  pub finished_at: chrono::DateTime<UTC>
 }

@@ -33,8 +33,8 @@ impl Processor {
       stdout: String::from_utf8(stdout.clone()).ok().expect("cannot convert stdout to string"),
       status: output.status.code().unwrap().to_string(),
       period: Period {
-        started_at: started_at.to_rfc3339(),
-        finished_at: finished_at.to_rfc3339()
+        started_at: started_at,
+        finished_at: finished_at
       }
     }
   }
