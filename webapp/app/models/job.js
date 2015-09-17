@@ -36,5 +36,9 @@ export default DS.Model.extend({
     }
 
     return 'failed';
+  }),
+
+  isFinished: Ember.computed('exitCode', function () {
+    return this.get('exitCode') !== null;
   })
 });

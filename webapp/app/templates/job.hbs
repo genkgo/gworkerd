@@ -28,10 +28,22 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>{{model.exitCode}}</td>
+                    <td>
+                        {{#if model.isFinished}}
+                            {{model.exitCode}}
+                        {{/if}}
+                    </td>
                     <td>{{datetime-format model.startedAt}}</td>
-                    <td>{{datetime-format model.finishedAt}}</td>
-                    <td>{{model.duration}}s</td>
+                    <td>
+                        {{#if model.isFinished}}
+                            {{datetime-format model.finishedAt}}
+                        {{/if}}
+                    </td>
+                    <td>
+                        {{#if model.isFinished}}
+                            {{model.duration}}
+                        {{/if}}
+                    </td>
                 </tr>
             </tbody>
         </table>
