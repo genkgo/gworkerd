@@ -3,6 +3,7 @@
     <tr>
         <th class="identifier">ID</th>
         <th class="command">Command</th>
+        <th>Started at</th>
     </tr>
     </thead>
     <tbody>
@@ -10,6 +11,7 @@
         <tr class="{{job.status}}">
             <td class="identifier">{{#link-to 'job' job}}{{job.id}}{{/link-to}}</td>
             <td class="command">{{job.command}}</td>
+            <td>{{datetime-format model.startedAt}}</td>
         </tr>
     {{/each}}
     </tbody>
