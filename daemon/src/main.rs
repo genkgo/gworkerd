@@ -4,23 +4,28 @@ extern crate flexi_logger;
 extern crate log;
 extern crate rustc_serialize;
 
+use config::Config;
 use docopt::Docopt;
 use flexi_logger::{detailed_format,init};
 use flexi_logger::LogConfig as FlexiLogConfig;
 use rustc_serialize::json;
 use std::fs::File;
 use std::io::Read;
+use std::process;
 use std::sync::mpsc::channel;
 use std::thread;
 use worker::{Request, Response, Item};
-use consumer::{StompConfig, StompConsumer, Consumer};
-use record_backend::{MysqlConfig, RecordRepository, RecordRepositoryError};
+use consumer::{StompConsumer, Consumer};
+use record_backend::{RecordRepository, RecordRepositoryError};
 use processor::Processor;
+use monitor::HttpServer;
 
+mod config;
 mod consumer;
 mod processor;
 mod worker;
 mod record_backend;
+mod monitor;
 
 // Write the Docopt usage string.
 static USAGE: &'static str = "
@@ -39,25 +44,16 @@ struct Args {
   flag_version: bool,
 }
 
-#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
-struct LogConfig {
-  directory: String,
-  levels: String
-}
-
-#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
-struct Config {
-  log: LogConfig,
-  threads: u32,
-  stomp: StompConfig,
-  mysql: MysqlConfig,
-}
-
 fn main() {
   // docopt
   let args: Args = Docopt::new(USAGE)
     .and_then(|d| d.decode())
     .unwrap_or_else(|e| e.exit());
+
+  if args.flag_version {
+    println!("Gworkerd Version: {}", config::VERSION);
+    process::exit(1);
+  }
 
   let mut file = File::open(args.arg_config).unwrap();
   let mut data = String::new();
@@ -105,28 +101,39 @@ fn main() {
   }
 
   let record_connection = config.mysql.to_connection();
-  let record_store_thread = thread::spawn(move || {
+
+  {
     let connection = record_connection.clone();
-    loop {
-      let item = record_store_rx.recv().unwrap();
-      match connection.store(item.to_record()) {
-        Err(RecordRepositoryError::CannotStoreRecord) => {
-          error!("[{:?}] cannot add record to result backend", item.request.id);
-        },
-        Err(_) => {
-          error!("[{:?}] unknown error occured", item.request.id);
-        },
-        Ok(_) => {
-          info!("[{:?}] added to result backend", item.request.id);
+    let record_store_thread = thread::spawn(move || {
+      loop {
+        let item = record_store_rx.recv().unwrap();
+        match connection.store(item.to_record()) {
+          Err(RecordRepositoryError::CannotStoreRecord) => {
+            error!("[{:?}] cannot add record to result backend", item.request.id);
+          },
+          Err(_) => {
+            error!("[{:?}] unknown error occured", item.request.id);
+          },
+          Ok(_) => {
+            info!("[{:?}] added to result backend", item.request.id);
+          }
         }
       }
+    });
+    threads.push(record_store_thread);
+  }
 
-    }
-  });
+  {
+    let connection = Box::new(record_connection.clone());
+    let monitor_thread = thread::spawn(move || {
+      let mut http_server = HttpServer::new(config.monitor.clone(), connection);
+      http_server.listen();
+    });
+    threads.push(monitor_thread);
+  }
 
   for item in threads {
     item.join().ok().expect("unable to join processor thread");
   }
 
-  record_store_thread.join().ok().expect("unable to join result backend thread");
 }

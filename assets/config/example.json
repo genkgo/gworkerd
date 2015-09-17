@@ -18,5 +18,8 @@
         "host": "/",
         "topic": "/queue/gworkerd",
         "prefetch_count": 1
+    },
+    "monitor": {
+        "address": "localhost:3000"
     }
 }
