@@ -46,7 +46,12 @@ $ cd daemon && cargo build
         "host": "/",
         "topic": "/queue/gworkerd",
         "prefetch_count": 1
-    }
+    },
+     "monitor": {
+         "address": "localhost:3000",
+         "webapp_path": "../webapp/dist",
+         "websockets": false
+     }
 }
 ```
 
@@ -70,6 +75,13 @@ Send your to the message queue. The content type of a job should be  application
     "cwd": "/your/directory"
 }
 ```
+
+### Monitor what is going on in your browser
+
+Move your browser to the address of the monitor and you can see exactly what is going on.
+
+`http://localhost:3000/monitor/`
+
 
 ## Roadmap
 
