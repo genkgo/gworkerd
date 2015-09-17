@@ -62,16 +62,16 @@ pub struct Record {
 impl ToJson for Record {
 
   fn to_json(&self) -> Json {
-      let mut data = BTreeMap::new();
-      data.insert("id".to_string(), self.id.to_json());
-      data.insert("command".to_string(), self.command.to_json());
-      data.insert("cwd".to_string(), self.cwd.to_json());
-      data.insert("status".to_string(), self.status.to_json());
-      data.insert("stderr".to_string(), self.stderr.to_json());
-      data.insert("stdout".to_string(), self.stdout.to_json());
-      data.insert("started_at".to_string(), self.started_at.to_rfc3339().to_json());
-      data.insert("finished_at".to_string(), self.finished_at.to_rfc3339().to_json());
-      Json::Object(data)
+    let mut data = BTreeMap::new();
+    data.insert("id".to_string(), self.id.to_json());
+    data.insert("command".to_string(), self.command.to_json());
+    data.insert("cwd".to_string(), self.cwd.to_json());
+    data.insert("status".to_string(), self.status.to_json());
+    data.insert("stderr".to_string(), self.stderr.to_json());
+    data.insert("stdout".to_string(), self.stdout.to_json());
+    data.insert("started_at".to_string(), self.started_at.to_rfc3339().to_json());
+    data.insert("finished_at".to_string(), self.finished_at.to_rfc3339().to_json());
+    Json::Object(data)
   }
 
 }

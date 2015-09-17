@@ -161,7 +161,8 @@ impl RecordRepository for MysqlRepository {
   }
 
   fn fetch_record (&self, id: String) -> Result<(Record), RecordRepositoryError> {
-    let query = r"SELECT HEX(id) AS id, command, cwd, status, stderr, stdout, started_at, finished_at FROM results WHERE id = ?";
+    let uuid_optimized = MysqlOptimizedUuid::from_uuid(id.clone());
+    let query = r"SELECT HEX(id) AS id, command, cwd, status, stderr, stdout, CAST(started_at AS char) AS started_at, CAST(finished_at AS char) AS finished_at FROM results WHERE HEX(id) = ?";
 
     let mut stmt = match self.pool.prepare(query) {
       Ok(s) => s,
@@ -169,7 +170,7 @@ impl RecordRepository for MysqlRepository {
     };
 
     let results: Result<(Vec<Record>), RecordRepositoryError> = match stmt
-      .execute((id, ))
+      .execute((uuid_optimized.uuid, ))
       .map(|result| {
         result.map(|row| {
           self.row_to_record(row)

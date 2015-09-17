@@ -113,6 +113,39 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
         }
       });
     }
+    {
+      let backend = self.backend.clone();
+      router.get("/api/jobs/:id", move |req: &mut Request| {
+        let ref id = req.extensions.get::<Router>().unwrap().find("id").unwrap_or("/");
+        match backend.fetch_record(id.to_string()) {
+          Err(RecordRepositoryError::CannotDenormalizeRecord) => {
+            let json = "{\"message\": \"Cannot denormalize records from database\"}";
+            let mut response = Response::with((status::InternalServerError, json));
+            response.headers.set(ContentType(Mime(TopLevel::Application, SubLevel::Json, vec![])));
+            Ok(response)
+          },
+          Err(RecordRepositoryError::RecordNotFound) => {
+            let json = "{\"message\": \"Record does not exists\"}";
+            let mut response = Response::with((status::NotFound, json));
+            response.headers.set(ContentType(Mime(TopLevel::Application, SubLevel::Json, vec![])));
+            Ok(response)
+          },
+          Err(_) => {
+            let mut response = Response::with((status::InternalServerError, "{\"message\": \"Unknown error\" }"));
+            response.headers.set(ContentType(Mime(TopLevel::Application, SubLevel::Json, vec![])));
+            Ok(response)
+          },
+          Ok(record) => {
+            let job_response = JobsResponse { job: vec![record] };
+            let response_data = job_response.to_json();
+
+            let mut response = Response::with((status::Ok, response_data.to_string()));
+            response.headers.set(ContentType(Mime(TopLevel::Application, SubLevel::Json, vec![])));
+            Ok(response)
+          }
+        }
+      });
+    }
 
     let mut mount = Mount::new();
     mount.mount("/", router);
