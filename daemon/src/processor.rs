@@ -10,31 +10,43 @@ impl Processor {
 
   pub fn run (request: Request) -> Response {
     // starting process
-    let mut command = Command::new(request.program.clone());
+    let started_at = UTC::now();
+
+    let mut command = Command::new("sh");
+    command.arg("-c");
+    command.arg(request.command.clone());
     command.current_dir(request.cwd.clone());
 
-    for arg in &request.args {
-      command.arg(arg);
-    }
+    match command.output() {
+      Err(_) => {
+        let finished_at = UTC::now();
 
-    let started_at = UTC::now();
-    let output = command.output()
-    .unwrap_or_else(|e| {
-      panic!("failed to execute process: {}", e);
-    });
+        // create response
+        Response {
+          stderr: "could not execute".to_string(),
+          stdout: "".to_string(),
+          status: 1i32,
+          period: Period {
+            started_at: started_at,
+            finished_at: finished_at
+          }
+        }
+      },
+      Ok(output) => {
+        let stdout = output.stdout;
+        let stderr = output.stderr;
+        let finished_at = UTC::now();
 
-    let stdout = output.stdout;
-    let stderr = output.stderr;
-    let finished_at = UTC::now();
-
-    // create response
-    Response {
-      stderr: String::from_utf8(stderr.clone()).ok().expect("cannot convert stderr to string"),
-      stdout: String::from_utf8(stdout.clone()).ok().expect("cannot convert stdout to string"),
-      status: output.status.code().unwrap().to_string(),
-      period: Period {
-        started_at: started_at,
-        finished_at: finished_at
+        // create response
+        Response {
+          stderr: String::from_utf8(stderr.clone()).ok().expect("cannot convert stderr to string"),
+          stdout: String::from_utf8(stdout.clone()).ok().expect("cannot convert stdout to string"),
+          status: output.status.code().unwrap(),
+          period: Period {
+          started_at: started_at,
+          finished_at: finished_at
+          }
+        }
       }
     }
   }

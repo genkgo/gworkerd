@@ -11,9 +11,9 @@ export default Ember.Route.extend({
     if (params['status']) {
       var status = params['status'];
       return this.store.filter('job', {
-        'status': status
+        'readyState': status
       }, function (job) {
-        return job.get('status') === status;
+        return job.get('readyState') === status;
       });
     } else {
       return this.store.filter('job', function () {

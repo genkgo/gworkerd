@@ -5,7 +5,8 @@ module.exports = function(environment) {
     modulePrefix: 'gworkerd',
     environment: environment,
     baseURL: '/',
-    locationType: 'auto',
+    rootURL: 'index.html',
+    locationType: 'hash',
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
@@ -16,9 +17,9 @@ module.exports = function(environment) {
     APP: {
       initialJobLimit: 300,
       data : {
-        host: 'http://localhost:9192',
-        path: '',
-        socket: 'ws://localhost:9192/'
+        host: '',
+        path: 'api',
+        socket: 'ws://localhost:3000/stream'
       }
     }
   };
@@ -60,7 +61,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-
+    ENV.baseURL = '/monitor';
   }
 
   return ENV;

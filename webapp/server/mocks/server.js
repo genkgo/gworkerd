@@ -3,7 +3,8 @@ var server =
   ip: '127.0.0.1',
   hostname: 'genkgo.com',
   version: '0.1.0',
-  startedAt: (new Date()).toISOString()
+  startedAt: (new Date()).toISOString(),
+  websockets: true
 };
 
 module.exports = function(app) {

@@ -4,7 +4,7 @@ import moment from 'moment';
 
 export default DS.Model.extend({
   command : DS.attr('string'),
-  exitCode : DS.attr('number'),
+  status : DS.attr('number'),
   startedAt: DS.attr('date'),
   finishedAt: DS.attr('date'),
   stdout : DS.attr('string'),
@@ -24,8 +24,8 @@ export default DS.Model.extend({
     return this.get('exitCode') === 0;
   }),
 
-  status: Ember.computed('exitCode', function () {
-    var exitCode = this.get('exitCode');
+  readyState: Ember.computed('status', function () {
+    var exitCode = this.get('status');
 
     if (exitCode === null) {
       return 'busy';
@@ -38,7 +38,7 @@ export default DS.Model.extend({
     return 'failed';
   }),
 
-  isFinished: Ember.computed('exitCode', function () {
-    return this.get('exitCode') !== null;
+  isFinished: Ember.computed('status', function () {
+    return this.get('status') !== null;
   })
 });

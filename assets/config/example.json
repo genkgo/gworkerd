@@ -8,7 +8,7 @@
         "address": "127.0.0.1",
         "username": "root",
         "password": "",
-        "database": "worker_results"
+        "database": "gworkerd"
     },
     "stomp": {
         "address": "127.0.0.1",
@@ -20,6 +20,8 @@
         "prefetch_count": 1
     },
     "monitor": {
-        "address": "localhost:3000"
+        "address": "localhost:3000",
+        "webapp_path": "../webapp/dist",
+        "websockets": false
     }
 }

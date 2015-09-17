@@ -61,15 +61,12 @@ impl MysqlRepository {
   }
 
   fn row_to_record (&self, row: MyResult<Vec<Value>>) -> Record {
-    let row_data = from_row(row.unwrap());
-    let (id, command, cwd, status, stderr, stdout, started_at_col, finished_at_col) = row_data;
+    let (id, command, cwd, status, stderr, stdout, started_at_col, finished_at_col) = from_row::<(String, String, String, i32, String, String, String, String)>(row.unwrap());
 
-    let started_at_encoded: String = started_at_col;
-    let finished_at_encoded: String = finished_at_col;
-    let started_at = UTC.datetime_from_str(&started_at_encoded, "%Y-%m-%d %H:%M:%S").unwrap();
-    let finished_at = UTC.datetime_from_str(&finished_at_encoded, "%Y-%m-%d %H:%M:%S").unwrap();
+    let started_at = UTC.datetime_from_str(&started_at_col, "%Y-%m-%d %H:%M:%S").unwrap();
+    let finished_at = UTC.datetime_from_str(&finished_at_col, "%Y-%m-%d %H:%M:%S").unwrap();
 
-    let optimized_uuid = MysqlOptimizedUuid { uuid: id };
+    let optimized_uuid = MysqlOptimizedUuid { uuid: id.to_string() };
 
     Record {
       id: optimized_uuid.to_uuid(),
@@ -141,7 +138,7 @@ impl RecordRepository for MysqlRepository {
   }
 
   fn fetch_limit (&self, size: u32, limit: u32) -> Result<(Vec<Record>), RecordRepositoryError> {
-    let query = r"SELECT HEX(id) AS id, command, cwd, status, stderr, stdout,started_at, finished_at FROM results LIMIT ? OFFSET ?";
+    let query = r"SELECT HEX(id) AS id, command, cwd, status, stderr, stdout, CAST(started_at AS char) AS started_at, CAST(finished_at AS char) AS finished_at FROM results LIMIT ? OFFSET ?";
 
     let mut stmt = match self.pool.prepare(query) {
       Ok(s) => s,
@@ -164,7 +161,7 @@ impl RecordRepository for MysqlRepository {
   }
 
   fn fetch_record (&self, id: String) -> Result<(Record), RecordRepositoryError> {
-    let query = r"SELECT HEX(id) AS id, command, cwd, status, stderr, stdout FROM results WHERE id = ?";
+    let query = r"SELECT HEX(id) AS id, command, cwd, status, stderr, stdout, started_at, finished_at FROM results WHERE id = ?";
 
     let mut stmt = match self.pool.prepare(query) {
       Ok(s) => s,

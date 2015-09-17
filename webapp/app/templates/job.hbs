@@ -1,4 +1,4 @@
-<div class="job--output {{model.status}}">
+<div class="job--output {{model.readyState}}">
     <h1>Job <strong>{{model.id}}</strong></h1>
 
     <div class="about">
@@ -11,7 +11,7 @@
             </tr>
             <tr>
                 <th>Status</th>
-                <td>{{model.status}}</td>
+                <td>{{model.readyState}}</td>
             </tr>
             </tbody>
         </table>
@@ -30,7 +30,7 @@
                 <tr>
                     <td>
                         {{#if model.isFinished}}
-                            {{model.exitCode}}
+                            {{model.status}}
                         {{/if}}
                     </td>
                     <td>{{datetime-format model.startedAt}}</td>

@@ -8,7 +8,7 @@
     </thead>
     <tbody>
     {{#each jobs as |job|}}
-        <tr class="{{job.status}}">
+        <tr class="{{job.readyState}}">
             <td class="identifier">{{#link-to 'job' job}}{{job.id}}{{/link-to}}</td>
             <td class="command">{{job.command}}</td>
             <td>{{datetime-format model.startedAt}}</td>
