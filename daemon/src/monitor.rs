@@ -103,7 +103,7 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
             }
             Ok(Response::with((status::Ok, "")))
           },
-          Err(ref e) => {
+          Err(_) => {
             Ok(Response::with((status::BadRequest, "")))
           }
         };
