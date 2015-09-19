@@ -1,21 +1,23 @@
+extern crate chrono;
 extern crate hyper;
 extern crate iron;
-extern crate chrono;
 extern crate mount;
 extern crate router;
 extern crate rustc_serialize;
 extern crate staticfile;
+extern crate urlencoded;
 
 use self::chrono::UTC;
 use self::hyper::header::ContentType;
 use self::hyper::mime::{Mime, TopLevel, SubLevel};
-use self::iron::{Iron, Request, Response};
+use self::iron::prelude::*;
 use self::iron::status;
 use self::mount::Mount;
 use self::router::Router;
 use self::rustc_serialize::json;
 use self::rustc_serialize::json::{ToJson, Json};
 use self::staticfile::Static;
+use self::urlencoded::UrlEncodedBody;
 use record_backend::{RecordRepository, RecordRepositoryError};
 use config;
 use std::any::Any;
@@ -27,7 +29,8 @@ use worker::Record;
 pub struct Config {
   address: String,
   webapp_path: String,
-  websockets: bool
+  websockets: bool,
+  password: String
 }
 
 pub struct HttpServer<R> {
@@ -84,6 +87,26 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
         let mut response = Response::with((status::Ok, response_data));
         response.headers.set(ContentType(Mime(TopLevel::Application, SubLevel::Json, vec![])));
         Ok(response)
+      });
+    }
+
+    {
+      let password = self.config.password;
+      router.post("/api/auth", move |req: &mut Request| {
+        match req.get_ref::<UrlEncodedBody>() {
+          Ok(ref body) => {
+            if !body.contains_key("password") {
+              return Ok(Response::with((status::BadRequest, "")))
+            }
+            if body.get("password").unwrap()[0] != password {
+              return Ok(Response::with((status::Unauthorized, "")))
+            }
+            Ok(Response::with((status::Ok, "")))
+          },
+          Err(ref e) => {
+            Ok(Response::with((status::BadRequest, "")))
+          }
+        };
       });
     }
 
@@ -151,7 +174,7 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
     mount.mount("/", router);
     mount.mount("/monitor", Static::new(Path::new(&self.config.webapp_path)));
 
-    let address: &str = &self.config.address[..];
-    Iron::new(mount).http(&address).unwrap();
+//    let address: &str = &self.config.address[..];
+    Iron::new(mount).http(&*self.config.address).unwrap();
   }
 }
