@@ -50,7 +50,8 @@ $ cd daemon && cargo build
      "monitor": {
          "address": "localhost:3000",
          "webapp_path": "../webapp/dist",
-         "websockets": false
+         "websockets": false,
+         "password": "random generated password"
      }
 }
 ```
