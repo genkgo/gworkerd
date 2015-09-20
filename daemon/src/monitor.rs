@@ -194,8 +194,6 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
     let mut mount = Mount::new();
     mount.mount("/", router);
     mount.mount("/monitor", Static::new(Path::new(&self.config.webapp_path)));
-
-//    let address: &str = &self.config.address[..];
     Iron::new(mount).http(&*self.config.address).unwrap();
   }
 }
