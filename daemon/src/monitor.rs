@@ -62,6 +62,18 @@ impl ToJson for JobsResponse {
 
 }
 
+fn verify_password (expected: &String, actual: &String) -> bool {
+  actual == expected
+}
+
+fn verify_request (req: &Request, password: &String) -> bool {
+  let requested_password = match req.headers.get_raw("x-password") {
+    Some(pwd_bytes) => String::from_utf8(pwd_bytes.concat()).unwrap(),
+    None => "".to_string()
+  };
+  verify_password(&requested_password, &password)
+}
+
 impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
 
   pub fn new (config: Config, backend: R) -> HttpServer <R> {
@@ -70,7 +82,6 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
 
   pub fn listen (&mut self) {
     let mut router = Router::new();
-    let mut mount = Mount::new();
 
     {
       let hostname = self.config.address.clone();
@@ -91,14 +102,14 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
     }
 
     {
-      let password = self.config.password;
+      let password = self.config.password.clone();
       router.post("/api/auth", move |req: &mut Request| {
         match req.get_ref::<UrlEncodedBody>() {
           Ok(ref body) => {
             if !body.contains_key("password") {
               return Ok(Response::with((status::BadRequest, "")))
             }
-            if body.get("password").unwrap()[0] != password {
+            if !verify_password(&body.get("password").unwrap()[0], &password) {
               return Ok(Response::with((status::Unauthorized, "")))
             }
             Ok(Response::with((status::Ok, "")))
@@ -106,13 +117,18 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
           Err(_) => {
             Ok(Response::with((status::BadRequest, "")))
           }
-        };
+        }
       });
     }
 
     {
       let backend = self.backend.clone();
+      let password = self.config.password.clone();
+
       router.get("/api/jobs", move |req: &mut Request| {
+        if !verify_request(&req, &password) {
+          return Ok(Response::with((status::Unauthorized, "")))
+        }
         match backend.fetch_limit(30, 0) {
           Err(RecordRepositoryError::CannotDenormalizeRecord) => {
             let json = "{\"message\": \"Cannot denormalize records from database\"}";
@@ -138,7 +154,12 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
     }
     {
       let backend = self.backend.clone();
+      let password = self.config.password.clone();
+
       router.get("/api/jobs/:id", move |req: &mut Request| {
+        if !verify_request(&req, &password) {
+          return Ok(Response::with((status::Unauthorized, "")))
+        }
         let ref id = req.extensions.get::<Router>().unwrap().find("id").unwrap_or("/");
         match backend.fetch_record(id.to_string()) {
           Err(RecordRepositoryError::CannotDenormalizeRecord) => {
