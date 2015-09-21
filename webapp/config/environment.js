@@ -17,8 +17,6 @@ module.exports = function(environment) {
     APP: {
       initialJobLimit: 300,
       data : {
-        host: '',
-        path: 'api',
         socket: 'ws://localhost:3000/stream'
       }
     }
@@ -39,8 +37,6 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
     ENV.APP.data = {
-      host: 'http://localhost:4200',
-      path: 'api',
       socket: 'ws://localhost:4200/api/stream'
     };
   }
@@ -61,7 +57,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    ENV.baseURL = '/monitor';
+    ENV.baseURL = '/';
   }
 
   return ENV;

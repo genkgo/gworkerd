@@ -90,7 +90,7 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
       let started_at = self.started_at.to_rfc3339().clone();
       let websockets = self.config.websockets;
 
-      router.get("/api/server", move |req: &mut Request| {
+      router.get("/server", move |req: &mut Request| {
         if !verify_request(&req, &password) {
           return Ok(Response::with((status::Unauthorized, "")))
         }
@@ -107,7 +107,7 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
 
     {
       let password = self.config.password.clone();
-      router.post("/api/auth", move |req: &mut Request| {
+      router.post("/auth", move |req: &mut Request| {
         match req.get_ref::<UrlEncodedBody>() {
           Ok(ref body) => {
             if !body.contains_key("password") {
@@ -129,7 +129,7 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
       let backend = self.backend.clone();
       let password = self.config.password.clone();
 
-      router.get("/api/jobs", move |req: &mut Request| {
+      router.get("/jobs", move |req: &mut Request| {
         if !verify_request(&req, &password) {
           return Ok(Response::with((status::Unauthorized, "")))
         }
@@ -160,7 +160,7 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
       let backend = self.backend.clone();
       let password = self.config.password.clone();
 
-      router.get("/api/jobs/:id", move |req: &mut Request| {
+      router.get("/jobs/:id", move |req: &mut Request| {
         if !verify_request(&req, &password) {
           return Ok(Response::with((status::Unauthorized, "")))
         }
@@ -196,8 +196,8 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
     }
 
     let mut mount = Mount::new();
-    mount.mount("/", router);
-    mount.mount("/monitor", Static::new(Path::new(&self.config.webapp_path)));
+    mount.mount("/api", router);
+    mount.mount("/", Static::new(Path::new(&self.config.webapp_path)));
     Iron::new(mount).http(&*self.config.address).unwrap();
   }
 }

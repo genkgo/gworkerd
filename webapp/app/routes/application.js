@@ -16,10 +16,10 @@ export default Ember.Route.extend({
     var appController = this.controllerFor('application');
     if (appController.get('login') === true) {
       Ember.$.ajax({
-        url: '/api/server',
+        url: window.location.pathname + 'api/server',
         type: 'GET',
         beforeSend: (xhr) => {
-          xhr.setRequestHeader('X-Password', window.sessionStorage.getItem('password'))
+          xhr.setRequestHeader('X-Password', window.sessionStorage.getItem('password'));
         }
       }).then((server) => {
         appController.set('server', server);

@@ -4,6 +4,7 @@ import moment from 'moment';
 
 export default DS.Model.extend({
   command : DS.attr('string'),
+  cwd : DS.attr('string'),
   status : DS.attr('number'),
   startedAt: DS.attr('date'),
   finishedAt: DS.attr('date'),

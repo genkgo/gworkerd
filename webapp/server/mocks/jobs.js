@@ -1,7 +1,8 @@
 var jobs = [
   {
     id: '703b0151-c09b-4d86-8925-2219f17407fd',
-    command: '/usr/bin/php test.php',
+    command: 'php test.php',
+    cwd: '/directory',
     status: 0,
     startedAt: new Date(2015, 3, 9, 8, 0, 0),
     finishedAt: new Date(2015, 3, 9, 8, 10, 0),
@@ -10,7 +11,8 @@ var jobs = [
   },
   {
     id: '65673aae-6caf-48c2-a9f2-31b001504a01',
-    command: '/usr/bin/php test.php',
+    command: 'php test.php',
+    cwd: '/directory',
     status: 0,
     startedAt: new Date(2015, 3, 9, 9, 0, 0),
     finishedAt: new Date(2015, 3, 9, 9, 10, 0),
@@ -19,7 +21,8 @@ var jobs = [
   },
   {
     id: 'd87406a5-27b8-40a5-a094-fabddfd37b05',
-    command: '/usr/bin/php test.php',
+    command: 'php test.php',
+    cwd: '/directory',
     status: 1,
     startedAt: new Date(2015, 3, 9, 10, 0, 0),
     finishedAt: new Date(2015, 3, 9, 10, 10, 0),
@@ -92,11 +95,12 @@ module.exports = function(app, wss) {
     var job = {
       id: uuid.v1(),
       command: '/usr/bin/php test.php',
-      'status': null,
-      'startedAt': new Date(),
-      'finishedAt': null,
-      'stdout': 'STDOUT output',
-      'stderr': 'STDERR output'
+      cwd: '/directory',
+      status: null,
+      startedAt: new Date(),
+      finishedAt: null,
+      stdout: 'STDOUT output',
+      stderr: 'STDERR output'
     };
 
     jobs.push(job);

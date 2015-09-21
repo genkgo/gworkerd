@@ -4,7 +4,7 @@ export default Ember.Route.extend({
 
   actions: {
     submit: function (password) {
-      Ember.$.post('/api/auth', {
+      Ember.$.post(window.location.pathname + 'api/auth', {
         password: password
       }).done(() => {
         this.controllerFor('application').set('login', true);
