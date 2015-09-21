@@ -84,12 +84,16 @@ impl <R: RecordRepository + Clone + Send + Sync + Any> HttpServer<R> {
     let mut router = Router::new();
 
     {
+      let password = self.config.password.clone();
       let hostname = self.config.address.clone();
       let version = String::from(config::VERSION);
       let started_at = self.started_at.to_rfc3339().clone();
       let websockets = self.config.websockets;
 
       router.get("/api/server", move |req: &mut Request| {
+        if !verify_request(&req, &password) {
+          return Ok(Response::with((status::Unauthorized, "")))
+        }
         let ip = format!("{}", req.local_addr).to_string();
         let server = ServerResponse {
           ip: ip, hostname: hostname.clone(), version: version.clone(), started_at: started_at.clone(), websockets: websockets
