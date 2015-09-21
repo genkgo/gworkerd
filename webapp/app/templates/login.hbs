@@ -1,0 +1,10 @@
+<form class="{{if busy 'loading'}}">
+
+    {{#if failed}}
+        <p class="error">Login failed, please try again</p>
+    {{/if}}
+
+    {{input type="password" class="password" name="password" autocorrect="off" autocapitalize="off" value=password}}
+
+    <a href="#" class="button" {{action 'submit' password}}>Login</a>
+</form>

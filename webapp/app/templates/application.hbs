@@ -1,25 +1,29 @@
-<header>
-    {{#link-to 'index'}}<span class="logo">Gworkerd</span>{{/link-to}}
-</header>
-<nav class="main--navigation">
-    {{#link-to 'index' class="dashboard"}}<span>Dashboard</span>{{/link-to}}
-    {{#link-to 'jobs' (query-params status="successful") class="successful"}}<span>Processed</span>{{/link-to}}
-    {{#link-to 'jobs' (query-params status="failed") class="failed"}}<span>Failed</span>{{/link-to}}
-    {{#link-to 'jobs' (query-params status="busy") class="busy"}}<span>Busy</span>{{/link-to}}
-</nav>
-<main>
-    <div class="status--output">
-        {{#if connected}}
-            <span class="message connected">connected to <span class="hostname">{{model.hostname}}</span><span
-                    class="ip-address">({{model.ip}})</span></span>
-        {{else}}
-            <span class="message disconnected">disconnected</span>
-        {{/if}}
-    </div>
+{{#if login}}
+    <header>
+        {{#link-to 'index'}}<span class="logo">Gworkerd</span>{{/link-to}}
+    </header>
+    <nav class="main--navigation">
+        {{#link-to 'index' class="dashboard"}}<span>Dashboard</span>{{/link-to}}
+        {{#link-to 'jobs' (query-params status="successful") class="successful"}}<span>Processed</span>{{/link-to}}
+        {{#link-to 'jobs' (query-params status="failed") class="failed"}}<span>Failed</span>{{/link-to}}
+        {{#link-to 'jobs' (query-params status="busy") class="busy"}}<span>Busy</span>{{/link-to}}
+    </nav>
+    <main>
+        <div class="status--output">
+            {{#if connected}}
+                <span class="message connected">connected to <span class="hostname">{{server.hostname}}</span><span
+                        class="ip-address">({{server.ip}})</span></span>
+            {{else}}
+                <span class="message disconnected">disconnected</span>
+            {{/if}}
+        </div>
 
+        {{outlet}}
+    </main>
+
+    <footer>Started At: {{datetime-format server.started}} - Gworkerd {{server.version}} is made by <a
+            href="https://genkgo.com" class="genkgo-refferal"><img
+            src="https://static.genkgo.com/branding/genkgo/logo_alt.svg" alt="Genkgo B.V."/></a></footer>
+{{else}}
     {{outlet}}
-</main>
-
-<footer>Started At: {{datetime-format model.started}} - Gworkerd {{model.version}} is made by <a
-        href="https://genkgo.com" class="genkgo-refferal"><img
-        src="https://static.genkgo.com/branding/genkgo/logo_alt.svg" alt="Genkgo B.V."/></a></footer>
+{{/if}}

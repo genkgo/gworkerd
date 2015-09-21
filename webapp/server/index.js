@@ -11,9 +11,13 @@ module.exports = function(app, options) {
   var globSync   = require('glob').sync;
   var mocks      = globSync('./mocks/**/*.js', { cwd: __dirname }).map(require);
   var proxies    = globSync('./proxies/**/*.js', { cwd: __dirname }).map(require);
-
   var WebSocketServer = require('ws').Server;
   var wss = new WebSocketServer({server: options.httpServer});
+  var bodyParser = require('body-parser');
+
+  // transform request body
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
 
   globSync('./helpers/**/*.js', { cwd: __dirname }).map(require);
 

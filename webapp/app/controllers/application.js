@@ -4,9 +4,12 @@ import ENV from 'gworkerd/config/environment';
 export default Ember.Controller.extend({
   socketService: Ember.inject.service('websockets'),
   connected: false,
+  login: window.sessionStorage.getItem('password') !== null,
+  password: null,
+  server: null,
 
   shouldStartSocket : Ember.observer('model', function () {
-    if (this.get('model').websockets) {
+    if (this.get('server') && this.get('server').websockets) {
       var controller = this;
       var socket = this.get('socketService').socketFor(ENV.APP.data.socket);
 
@@ -26,7 +29,7 @@ export default Ember.Controller.extend({
         controller.send('jobUpdate', message.job);
       }, this);
     }
-  }),
+  }).observes('server'),
 
   close : function () {
     this.get('socketService').closeSocketFor(ENV.APP.data.socket);

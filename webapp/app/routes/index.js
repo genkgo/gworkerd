@@ -1,7 +1,7 @@
-import Ember from 'ember';
+import AuthRouter from 'gworkerd/routes/auth-router';
 import ENV from 'gworkerd/config/environment';
 
-export default Ember.Route.extend({
+export default AuthRouter.extend({
   jobLimit : ENV.APP.initialJobLimit,
 
   model: function () {
