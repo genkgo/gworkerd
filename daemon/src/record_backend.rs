@@ -138,7 +138,7 @@ impl RecordRepository for MysqlRepository {
   }
 
   fn fetch_limit (&self, size: u32, limit: u32) -> Result<(Vec<Record>), RecordRepositoryError> {
-    let query = r"SELECT HEX(id) AS id, command, cwd, status, stderr, stdout, CAST(started_at AS char) AS started_at, CAST(finished_at AS char) AS finished_at FROM results LIMIT ? OFFSET ?";
+    let query = r"SELECT HEX(id) AS id, command, cwd, status, stderr, stdout, CAST(started_at AS char) AS started_at, CAST(finished_at AS char) AS finished_at FROM results ORDER BY started_at DESC LIMIT ? OFFSET ?";
 
     let mut stmt = match self.pool.prepare(query) {
       Ok(s) => s,
