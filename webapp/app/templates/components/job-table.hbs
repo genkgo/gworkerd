@@ -13,7 +13,7 @@
             <td class="identifier">{{#link-to 'job' job}}{{job.id}}{{/link-to}}</td>
             <td class="command">{{job.command}}</td>
             <td class="cwd">{{job.cwd}}</td>
-            <td class="started">{{datetime-format model.startedAt}}</td>
+            <td class="started">{{datetime-format job.startedAt}}</td>
         </tr>
     {{/each}}
     </tbody>

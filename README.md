@@ -80,7 +80,7 @@ Send your to the message queue. The content type of a job should be  application
 
 Move your browser to the address of the monitor and you can see exactly what is going on.
 
-`http://localhost:3000/monitor/`
+`http://localhost:3000/`
 
 
 ## Roadmap
