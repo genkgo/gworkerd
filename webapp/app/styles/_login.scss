@@ -1,0 +1,119 @@
+form.login {
+	text-align: center;
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 50;
+	background-color: $color--body;
+
+	fieldset {
+		transition: all .25s;
+		padding: 3em;
+		border: 2px solid $color--white;
+		position: absolute;
+		top: 50%;
+		left: 0;
+		right: 0;
+		display: block;
+		max-width: 40em;
+		margin: 0 auto;
+		transform: translateY(-50%);
+
+		> * {
+			transition: all .25s;
+			opacity: 1;
+		}
+
+		&:after {
+			transition: all .25s;
+			content: '';
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			opacity: 0;
+			transform: scale(0);
+			background: url('loader.svg') no-repeat center center;
+			background-size: 4em;
+		}
+	}
+
+	&.loading fieldset{
+		&:after {
+			opacity: 1;
+			transform: scale(1);
+		}
+		& > * {
+			transform: scale(0);
+			opacity: 0;
+		}
+	}
+	&.error fieldset {
+		border-color: $color--status--off;
+		color: $color--status--off;
+	}
+}
+
+form.login {
+	label,
+	input,
+	div.error {
+		box-sizing: border-box;
+		display: block;
+		width: 100%;
+		margin-bottom: 1em;
+	}
+	a.button {
+		display: block;
+		margin: 0;
+		width: 10em;
+		margin: 0 auto;
+	}
+
+	label {
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		margin-bottom: 2em;
+	}
+	input {
+		padding: 1em;
+		border: 0;
+		font-size: 1em;
+		border-radius: 3px;
+		box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1);
+		color: $color--black;
+
+		&:focus {
+			outline: none;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+		}
+	}
+	input::-webkit-input-placeholder {
+		color: #bdc3c7;
+		font-size: 2em;
+		line-height: 1em;
+		letter-spacing: 2px;
+		font-weight: 700;
+	}
+	label {
+		font-size: 1em;
+	}
+
+	div.error {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		display: block;
+		width: 50%;
+		margin: 0 auto;
+		animation: fadeIn 1s;
+		padding: 1em;
+		background-color: $color--status--off;
+		color: $color--white;
+	}
+}

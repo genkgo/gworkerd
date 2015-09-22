@@ -1,10 +1,12 @@
-<form class="{{if busy 'loading'}}">
-
+<form class="login {{if loading 'loading'}} {{if failed 'error'}}"  {{action "submit" password on="submit"}}>
     {{#if failed}}
-        <p class="error">Login failed, please try again</p>
+        <div class="error">Login failed, please try again</div>
     {{/if}}
 
-    {{input type="password" class="password" name="password" autocorrect="off" autocapitalize="off" value=password}}
+    <fieldset>
+        <label class="password">Please enter password</label>
+        {{input type="password" class="password" name="password" autocorrect="off" autocapitalize="off" value=password placeholder="********"}}
+        <a href="#" class="button" {{action 'submit' password}}>Login</a>
+    </fieldset>
 
-    <a href="#" class="button" {{action 'submit' password}}>Login</a>
 </form>

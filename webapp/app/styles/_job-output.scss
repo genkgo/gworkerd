@@ -12,6 +12,13 @@
 		margin-top: 2em;
 	}
 
+	h1 strong {
+		transition: color .25s;
+	}
+	table.meta tr:last-of-type td:last-of-type {
+		transition: background-color .25s;
+	}
+
 	&.failed {
 		h1 strong {
 			color: $color--status--off;
@@ -113,7 +120,7 @@
 			animation-fill-mode: both;
 		}
 		figure pre {
-			font-family: 'Source Code Pro', courier, monospace;
+			font-family: $code-font-family;
 			font-size: 1em;
 		}
 	}

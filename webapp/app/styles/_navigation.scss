@@ -28,16 +28,16 @@ nav.main--navigation {
 	}
 
 	.dashboard:before {
-		background-image: url('https://static.genkgo.com/entypo-plus/svg/F7F7F7/gauge.svg');
+		background-image: url($icons + 'F7F7F7/gauge.svg');
 	}
 	.successful:before {
-		background-image: url('https://static.genkgo.com/entypo-plus/svg/F7F7F7/check.svg');
+		background-image: url($icons + 'F7F7F7/check.svg');
 	}
 	.failed:before {
-		background-image: url('https://static.genkgo.com/entypo-plus/svg/F7F7F7/circle-with-cross.svg');
+		background-image: url($icons + 'F7F7F7/circle-with-cross.svg');
 	}
 	.busy:before {
-		background-image: url('https://static.genkgo.com/entypo-plus/svg/F7F7F7/hour-glass.svg');
+		background-image: url($icons + 'F7F7F7/hour-glass.svg');
 	}
 }
 

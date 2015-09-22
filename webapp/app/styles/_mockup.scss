@@ -1,11 +1,3 @@
-$color--main: #00AAAD;
-$color--white: #ecf0f1;
-$color--black: #152734;
-$color--body: #2d3f51;
-
-$color--status--on: #27ae60;
-$color--status--off: #e74c3c;
-
 body,
 header,
 main,
@@ -16,22 +8,19 @@ footer {
 
 body {
 	margin: 0;
-	font-family: $color--main;
+	font-family: $base-font-family;
 	font-weight: 400;
 	font-size: 14px;
 	line-height: 1.6em;
 	background-color: $color--body;
 	color: $color--white;
 }
-@media screen and (min-width: 1200px) {
-	body {
-		font-size: 16px;
-	}
-}
+
 a {
 	color: $color--main;
 	text-decoration: none;
 }
+
 header {
 	position: fixed;
 	top: 0;

@@ -1,9 +1,8 @@
 table.jobs {
-
 	th.identifier {
 		@extend %before-icon;
 		&:before {
-			background-image: url('https://static.genkgo.com/entypo-plus/svg/F7F7F7/dots-three-horizontal.svg');
+			background-image: url($icons + 'F7F7F7/dots-three-horizontal.svg');
 		}
 	}
 }
@@ -12,6 +11,7 @@ table.jobs tbody {
 	tr td {
 		transition: all .25s;
 		background-color: transparent;
+		width: 20%;
 
 		a {
 			transition: all .25s;
@@ -20,7 +20,7 @@ table.jobs tbody {
 	}
 	tr:hover td,
 	tr:focus td {
-		background-color: rgba(255,255,255,0.1);
+		background-color: rgba(255, 255, 255, 0.1);
 
 		a {
 			opacity: 0.9;
@@ -29,33 +29,26 @@ table.jobs tbody {
 	td.identifier {
 		@extend %before-icon;
 		color: $color--white;
-		width: 50%;
+		width: 40%;
 	}
 	tr.successful td.identifier {
 		color: $color--status--on;
 		&:before {
-			background-image: url('https://static.genkgo.com/entypo-plus/svg/27AE60/check.svg');
+			background-image: url($icons + '27AE60/check.svg');
 		}
 	}
 	tr.failed td.identifier {
 		color: $color--status--off;
 		&:before {
-			background-image: url('https://static.genkgo.com/entypo-plus/svg/E74C3C/circle-with-cross.svg');
+			background-image: url($icons + 'E74C3C/circle-with-cross.svg');
 		}
 	}
 	tr.busy td.identifier {
 		&:before {
-			background-image: url('https://static.genkgo.com/entypo-plus/svg/F7F7F7/hour-glass.svg');
+			background-image: url($icons + 'F7F7F7/hour-glass.svg');
 		}
 	}
 	td.identifier a {
 		color: inherit;
-	}
-
-	td.command {
-		width: 30%;
-	}
-	td.started {
-		width: 20%;
 	}
 }

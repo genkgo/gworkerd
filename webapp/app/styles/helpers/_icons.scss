@@ -1,5 +1,8 @@
+$icons: 'entypo-plus/';
+
 %before-icon {
 	&:before {
+		transition: background-image .25s;
 		content: '';
 		font-size: 1em;
 		height: 1em;
@@ -10,5 +13,6 @@
 		background-position: center center;
 		background-repeat: no-repeat;
 		background-size: 1em;
+		transform-origin: center center;
 	}
 }
