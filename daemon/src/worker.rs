@@ -69,8 +69,8 @@ impl ToJson for Record {
     data.insert("status".to_string(), self.status.to_json());
     data.insert("stderr".to_string(), self.stderr.to_json());
     data.insert("stdout".to_string(), self.stdout.to_json());
-    data.insert("started_at".to_string(), self.started_at.to_rfc3339().to_json());
-    data.insert("finished_at".to_string(), self.finished_at.to_rfc3339().to_json());
+    data.insert("startedAt".to_string(), self.started_at.to_rfc3339().to_json());
+    data.insert("finishedAt".to_string(), self.finished_at.to_rfc3339().to_json());
     Json::Object(data)
   }
 
