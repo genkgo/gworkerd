@@ -89,7 +89,7 @@ Move your browser to the address of the monitor and you can see exactly what is 
 * 0.2.0 ~~Pull jobs from STOMP and process jobs concurrently~~
 * 0.3.0 ~~Enable logging to file~~
 * 0.4.0 ~~Add config file to application~~
-* 0.5.0 Connect daemon to webapp
+* 0.5.0 ~~Connect daemon to webapp~~
 * 0.6.0 Support websocket in daemon
 * 0.7.0 Support multiple result backends and consumers
 * 0.8.0 Retry jobs
