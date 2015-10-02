@@ -1,13 +1,24 @@
 div.status--output {
 	display: block;
-	padding: 0.5em 0;
 	position: fixed;
-	top: 0em;
-	left: 15em;
+	top: 4em;
+	left: 0;
+	right: 0;
 	z-index: 20;
+	text-align: center;
+
+	@include mq {
+		background-color: transparent;
+		padding: 0.5em 0;
+		top: 0em;
+		right: auto;
+		left: 15em;
+	}
 
 	.message {
-		display: inline-block;
+		transition: all .25s;
+		color: $color--white;
+		display: block;
 		border: 2px solid;
 		padding: 0.5em 1em;
 		height: 3em;
@@ -16,11 +27,17 @@ div.status--output {
 		text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 
+		@include mq {
+			display: inline-block;
+		}
+
 		&.connected {
-			color: $color--status--on;
+			border-color: $color--status--on;
+			background-color: $color--status--on;
 		}
 		&.disconnected {
-			color: $color--status--off;
+			border-color: $color--status--off;
+			background-color: $color--status--off;
 		}
 	}
 }

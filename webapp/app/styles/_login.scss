@@ -6,7 +6,8 @@ form.login {
 	bottom: 0;
 	left: 0;
 	z-index: 50;
-	background-color: $color--body;
+	background: $color--body url('logo_gworkerd.png') no-repeat center 5em;
+	background-size: 20em auto;
 
 	fieldset {
 		transition: all .25s;
@@ -18,8 +19,12 @@ form.login {
 		right: 0;
 		display: block;
 		max-width: 40em;
-		margin: 0 auto;
+		margin: 0 1em;
 		transform: translateY(-50%);
+
+		@include mq {
+			margin: 0 auto;
+		}
 
 		> * {
 			transition: all .25s;

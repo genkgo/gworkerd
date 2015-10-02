@@ -1,5 +1,6 @@
 table {
 	border-spacing: 0;
+	max-width: 100%;
 	width: 100%;
 	text-align: left;
 	border: 2px solid rgba(0,0,0,0.1);
@@ -17,6 +18,7 @@ table {
 	tbody tr td,
 	tbody tr th {
 		border-bottom: 2px solid rgba(0,0,0,0.1);
+		word-break: break-word;
 	}
 	tbody tr:last-of-type td,
 	tbody tr:last-of-type th {

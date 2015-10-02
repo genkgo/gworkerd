@@ -1,0 +1,12 @@
+$doc-font-size: 16;
+$mobile: 320;
+$tablet: 760;
+$desktop: 1140;
+
+@mixin mq($point: $tablet, $query1: min, $query2: width) {
+	$query-result: $point / $doc-font-size+em;
+
+	@media screen and (#{$query1}-#{$query2}: $query-result) {
+		@content;
+	}
+}

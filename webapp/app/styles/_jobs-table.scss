@@ -1,4 +1,11 @@
 table.jobs {
+	font-size: 0.75em;
+
+	@include mq {
+		font-size: 1em;
+	}
+
+
 	th.identifier {
 		@extend %before-icon;
 		&:before {
@@ -50,5 +57,61 @@ table.jobs tbody {
 	}
 	td.identifier a {
 		color: inherit;
+	}
+}
+
+@include mq(($tablet - 1), max, width) {
+	table.jobs {
+		display: block;
+		box-sizing: border-box;
+
+		tbody, thead {
+			display: block;
+			width: 100%;
+
+			tr {
+				display: block;
+				clear: both;
+			}
+
+			tr td,
+			tr th {
+				box-sizing: border-box;
+				display: block;
+				float: left;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			tr td.command,
+			tr th.command,
+			tr td.cwd,
+			tr th.cwd,
+			tr td.started,
+			tr th.started {
+				font-size: 0.875em;
+				padding-top: 0;
+			}
+
+			tr td.command,
+			tr th.command {
+				width: 50%;
+			}
+			tr td.cwd,
+			tr th.cwd {
+				width: 30%;
+			}
+			tr td.started,
+			tr th.started {
+				width: 20%;
+			}
+
+			td.identifier,
+			th.identifier {
+				display: block;
+				width: 100%;
+				border: 0;
+			}
+		}
 	}
 }
