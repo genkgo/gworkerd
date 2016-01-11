@@ -126,12 +126,15 @@ impl RecordRepository for MysqlRepository {
     };
 
     let result = match stmt.execute(
-      (uuid_optimized.uuid, record.command, record.cwd, record.status, record.stderr,
+      (uuid_optimized.clone().uuid, record.command, record.cwd, record.status, record.stderr,
         record.stdout, record.started_at.format("%Y-%m-%d %H:%M:%S").to_string(), record.finished_at.format("%Y-%m-%d %H:%M:%S").to_string()
       )
     ) {
       Ok(_) => Ok(()),
-      Err(_) => return Err(RecordRepositoryError::CannotStoreRecord)
+      Err(err) => {
+        error!("[{:?}] error storing in mysql {:?}", uuid_optimized.clone().uuid, err);
+        return Err(RecordRepositoryError::CannotStoreRecord);
+      }
     };
 
     result
@@ -154,7 +157,10 @@ impl RecordRepository for MysqlRepository {
       })
     {
       Ok(records) => Ok(records),
-      Err(_) => return Err(RecordRepositoryError::CannotDenormalizeRecord)
+      Err(err) => {
+        error!("error fetching from mysql {:?}", err);
+        return Err(RecordRepositoryError::CannotDenormalizeRecord)
+      }
     };
 
     results
@@ -178,7 +184,10 @@ impl RecordRepository for MysqlRepository {
       })
     {
       Ok(records) => Ok(records),
-      Err(_) => return Err(RecordRepositoryError::CannotDenormalizeRecord)
+      Err(err) => {
+        error!("error fetching from mysql {:?}", err);
+        return Err(RecordRepositoryError::CannotDenormalizeRecord)
+      }
     };
 
     let records: Vec<Record> = results.unwrap();
