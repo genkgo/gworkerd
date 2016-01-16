@@ -29,3 +29,11 @@ tar --transform "s|monitor/dist|monitor|" \
     -cvzf release/gworkerd.$1.tar.gz \
     target/release/gworkerd \
     monitor/dist
+
+# zip file for github
+zip -j release/gworkerd.$1.zip target/release/gworkerd && \
+    cd monitor/ && \
+    mv dist monitor && \
+    zip -r ../release/gworkerd.$1.zip monitor && \
+    mv monitor dist && \
+    cd ..
