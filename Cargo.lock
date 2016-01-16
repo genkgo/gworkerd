@@ -1,6 +1,6 @@
 [root]
 name = "gworkerd"
-version = "0.5.3"
+version = "0.5.4"
 dependencies = [
  "chrono 0.2.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "docopt 0.6.78 (registry+https://github.com/rust-lang/crates.io-index)",

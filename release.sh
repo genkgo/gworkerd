@@ -18,7 +18,7 @@ version_toml="version = \"$1\""
 sed -i "s/version\(.*\)/$version_toml/" Cargo.toml
 
 # build daemon
-cargo build --release
+cargo clean && cargo build --release
 
 # commit current version
 git commit -a -m $1 && git push && git tag $1 && git push --tags
