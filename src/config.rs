@@ -2,7 +2,7 @@ use consumer::StompConfig;
 use record_backend::MysqlConfig;
 use monitor::Config as MonitorConfig;
 
-pub static VERSION: &'static str = "0.5.0";
+pub static VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 #[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 pub struct LogConfig {
