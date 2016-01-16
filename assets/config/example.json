@@ -21,7 +21,7 @@
     },
     "monitor": {
         "address": "localhost:3000",
-        "webapp_path": "../webapp/dist",
+        "webapp_path": "monitor/dist",
         "websockets": false,
         "password": "test"
     }
