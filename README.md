@@ -2,6 +2,8 @@
 
 Single worker that processes cli jobs with a graphical user interface for feedback.
 
+[![Build Status](https://travis-ci.org/genkgo/gworkerd.png?branch=master)](https://travis-ci.org/genkgo/gworkerd)
+
 ## Usage
 
 ### Start Message and Result Server
