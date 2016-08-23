@@ -22,7 +22,7 @@ start with mysql, create a [table](assets/sql/mysql_worker_results.sql) where yo
 ### Build gworkerd
 
 ```
-$ cd daemon && cargo build
+$ cargo build
 ```
 
 ### Create a configuration file

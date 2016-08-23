@@ -3,7 +3,7 @@ extern crate rustc_serialize;
 
 use self::stomp::session::Session;
 use self::stomp::session_builder::SessionBuilder;
-use self::stomp::connection::Credentials;
+use self::stomp::connection::{Credentials, HeartBeat};
 use self::stomp::frame::Frame;
 use self::stomp::header::{Header, SuppressedHeader};
 use self::stomp::subscription::AckOrNack::{Ack, Nack};
@@ -41,6 +41,7 @@ impl<'a> StompConsumer<'a> {
     let session = match SessionBuilder::new(&config.address, config.port)
       .with(Credentials(&config.username, &config.password))
       .with(SuppressedHeader("host"))
+      .with(HeartBeat(5000, 2000))
       .with(Header::new("host", &config.host))
       .start() {
         Ok(session) => session,
