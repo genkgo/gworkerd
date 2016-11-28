@@ -1,4 +1,4 @@
-FROM rabbitmq
+FROM rabbitmq:3.5.7
 
 MAINTAINER Frederik Bosch <f.bosch@genkgo.nl>
 
