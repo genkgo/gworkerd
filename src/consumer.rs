@@ -26,7 +26,7 @@ pub struct StompConfig {
   password: String,
   topic: String,
   prefetch_count: u16,
-  heartbeat: u16
+  heartbeat: u32
 }
 
 pub struct StompConsumer<'a> {
