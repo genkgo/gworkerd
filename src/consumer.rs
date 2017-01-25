@@ -42,7 +42,7 @@ impl<'a> StompConsumer<'a> {
     let session = match SessionBuilder::new(&config.address, config.port)
       .with(Credentials(&config.username, &config.password))
       .with(SuppressedHeader("host"))
-      .with(HeartBeat(&config.heartbeat, &config.heartbeat))
+      .with(HeartBeat(config.heartbeat.clone(), config.heartbeat.clone()))
       .with(Header::new("host", &config.host))
       .start() {
         Ok(session) => session,
