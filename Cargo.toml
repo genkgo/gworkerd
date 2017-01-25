@@ -1,6 +1,6 @@
 [package]
 name = "gworkerd"
-version = "0.5.7"
+version = "0.5.9"
 authors = [ "Frederik Bosch <development@genkgo.nl>" ]
 
 [dependencies]
