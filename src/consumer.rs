@@ -25,7 +25,8 @@ pub struct StompConfig {
   username: String,
   password: String,
   topic: String,
-  prefetch_count: u16
+  prefetch_count: u16,
+  heartbeat: u16
 }
 
 pub struct StompConsumer<'a> {
@@ -41,7 +42,7 @@ impl<'a> StompConsumer<'a> {
     let session = match SessionBuilder::new(&config.address, config.port)
       .with(Credentials(&config.username, &config.password))
       .with(SuppressedHeader("host"))
-      .with(HeartBeat(5000, 2000))
+      .with(HeartBeat(&config.heartbeat, &config.heartbeat))
       .with(Header::new("host", &config.host))
       .start() {
         Ok(session) => session,

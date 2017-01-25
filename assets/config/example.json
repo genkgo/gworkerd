@@ -17,7 +17,8 @@
         "password": "guest",
         "host": "/",
         "topic": "/queue/gworkerd",
-        "prefetch_count": 1
+        "prefetch_count": 1,
+        "heartbeat": 1800000
     },
     "monitor": {
         "address": "localhost:3000",
